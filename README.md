@@ -30,7 +30,7 @@ This is a small project for the software architecture subject.
     - Setup npm registry
         - `npm config set registry https://repo.plus4u.net/repository/public-javascript/`
     - Setup dev account
-      - Go to 'https://uuapp-dev.plus4u.net/uu-identitymanagement-maing01/58ceb15c275c4b31bfe0fc9768aa6a9c/https://uuidentity.plus4u.net'
+      - Go to 'https://uuapp-dev.plus4u.net/uu-identitymanagement-maing01/58ceb15c275c4b31bfe0fc9768aa6a9c/'
       - Sign in as `Production`
       - Setup account (uuid will be same as production)
       - Go to `Show token`
@@ -38,10 +38,10 @@ This is a small project for the software architecture subject.
           - Add `http://` in the scope
           - Save
     - Setup development asid (uuid)
-      - Go to `src\uu_referencedata_maing01-server\env\
+      - Go to `src\uu_referenceData_maing01\uu_referencedata_maing01-server\env\
       - Modify `development.json`
         - Add your uuid asid_owner_license_list
-            - Available at 'https://uuidentity.plus4u.net'
+            - Available at 'https://uuapp-dev.plus4u.net/uu-identitymanagement-maing01/58ceb15c275c4b31bfe0fc9768aa6a9c/'
             - Format of uuid: `0000-0000-0`
     - Install Insomnia Core
         - https://insomnia.rest
