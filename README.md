@@ -73,13 +73,13 @@ This is a small project for the software architecture subject.
 
 ## Project setup
 - Open Insomnia Core
-    - Open uuSubAppInstance/sys/uuSubAppInstance/init
+    - Open uuSubAppInstance: sys/uuSubAppInstance/init
       - Run
-    - Open uuSubAppInstance/sys/uuAppWorkspace/create
+    - Open uuAppWorkspace: sys/uuAppWorkspace/create
       - Run
-    - Open uuSubAppInstance/sys/uuAppWorkspace/assign
+    - Open uuAppWorkspace: sys/uuAppWorkspace/assign
       - Run
-    - Open uuSubAppInstance/sys/uuAppWorkspace/init
+    - Open uuAppWorkspace: sys/uuAppWorkspace/init
       - Run
 
 - **The site should be now available at**:
