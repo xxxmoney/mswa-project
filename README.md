@@ -73,14 +73,12 @@ This is a small project for the software architecture subject.
 
 ## Project setup
 - Open Insomnia Core
-    - Open uuSubAppInstance: sys/uuSubAppInstance/init
-      - Run
-    - Open uuAppWorkspace: sys/uuAppWorkspace/create
-      - Run
-    - Open uuAppWorkspace: sys/uuAppWorkspace/assign
-      - Run
-    - Open uuAppWorkspace: sys/uuAppWorkspace/init
-      - Run
+    - Open uuSubAppInstance: 
+      - Run `sys/uuSubAppInstance/init`
+    - Open uuAppWorkspace: 
+      - Run `sys/uuAppWorkspace/create`
+      - Run `sys/uuAppWorkspace/assign`
+      - Run `sys/uuAppWorkspace/init`
 
 - **The site should be now available at**:
     - `http://localhost:8080/uu-referencedata-maing01/22222222222222222222222222222222`
