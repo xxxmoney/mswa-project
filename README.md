@@ -1,14 +1,15 @@
 # Software architecture semester project
 
 ## Description
-
 This is a small project for the software architecture subject.
 
 ## Technologies
-
 - uuApp framework
     - Frontend: React
     - Backend: Node.js
+
+## Guide
+ - https://uuapp.plus4u.net/uu-bookkit-maing01/0238a88bac124b3ca828835b57144ffa/book/page?code=45697029
 
 ## Project parts
  - uu_referencedata_maing01_hi
@@ -16,9 +17,7 @@ This is a small project for the software architecture subject.
  - uu_referencedata_maing01_server
    - Server - Node.js (Express)
 
-## Environemnt Setup
-- Getting Started
-    - https://uuapp.plus4u.net/uu-bookkit-maing01/63d0f03c73cc42b1b67b3e780cc4aad9/book/page?code=57050306
+## Initial Setup
 - Environment setup
     - Install Node.js
         - Node Version Manager (nvm) - recommended
@@ -31,12 +30,14 @@ This is a small project for the software architecture subject.
         - `npm config set registry https://repo.plus4u.net/repository/public-javascript/`
     - Setup dev account
       - Go to 'https://uuapp-dev.plus4u.net/uu-identitymanagement-maing01/58ceb15c275c4b31bfe0fc9768aa6a9c/'
-      - Sign in as `Production`
+      - Sign in as `Production` (use the account we already have)
       - Setup account (uuid will be same as production)
-      - Go to `Show token`
+      - After logging with the account, go to `Show token`
         - Click `Change scope`
           - Add `http://` in the scope
           - Save
+        - Copy token (this token will be used for setup via Insomnia)
+        - You can also copy the uuid from the account - format `0000-0000-0`
     - Setup development asid (uuid)
       - Go to `src\uu_referenceData_maing01\uu_referencedata_maing01-server\env\
       - Modify `development.json`
@@ -45,28 +46,26 @@ This is a small project for the software architecture subject.
             - Format of uuid: `0000-0000-0`
     - Install Insomnia Core
         - https://insomnia.rest
-        - Import this file into Insomnia
+        - Open and import this file into Insomnia
             - `src\uu_referenceData_maing01\uu_referenceData_maing01-server\test\insomnia\insomnia-workspace.json`
         - Setup variables
           - Manage variables (CTRL + E)
-          - In localhost, set:
-            - `awidLicenseOwner` to your uuid, eg format `0000-0000-0`
           - In base environment, set:
-            - `contextPath` to `uu-referencedata-maing01`
-            - `token` to your token from 'https://uuapp-dev.plus4u.net/uu-identitymanagement-maing01/58ceb15c275c4b31bfe0fc9768aa6a9c/'
-              - This is the token from the dev account setup
+          - `contextPath` to `uu-referencedata-maing01`
+          - `token` to your token from 'https://uuapp-dev.plus4u.net/uu-identitymanagement-maing01/58ceb15c275c4b31bfe0fc9768aa6a9c/'
+              - You can use the copied token the the dev account setup
+          - In localhost, set:
+            - `awidLicenseOwner` to your uuid, eg format `0000-0000-0` 
 
-## Quick start guide
+## Start up guide
 - Go to the server directory
 ```bash
   cd src\uu_referenceData_maing01\uu_referenceData_maing01-server
 ```
-
 - Install dependencies
 ```bash
   npm install
 ```
-
 - Start the server
 ```bash
   npm start
@@ -75,11 +74,14 @@ This is a small project for the software architecture subject.
 ## Project setup
 - Open Insomnia Core
     - Open uuSubAppInstance/sys/uuSubAppInstance/init
-        - Run
+      - Run
     - Open uuSubAppInstance/sys/uuAppWorkspace/create
-        - Run
+      - Run
     - Open uuSubAppInstance/sys/uuAppWorkspace/assign
-        - Run
+      - Run
     - Open uuSubAppInstance/sys/uuAppWorkspace/init
       - Run
+
+- **The site should be now available at**:
+    - `http://localhost:8080/uu-referencedata-maing01/22222222222222222222222222222222`
 
