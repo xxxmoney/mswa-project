@@ -90,7 +90,7 @@ class CountryAbl {
    */
   async update(dtoIn) {
     let validationResult = this.validator.validate("countryUpdateDtoInType", dtoIn);
-    ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CountryUseCaseError.Update.InvalidDtoIn());
+    ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CountryUseCaseError.Update.InvalidDtoIn);
 
     const countryDao = DaoFactory.getDao("country");
     const currencyDao = DaoFactory.getDao("currency");
