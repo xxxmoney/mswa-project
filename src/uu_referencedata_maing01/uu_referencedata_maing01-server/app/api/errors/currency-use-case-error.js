@@ -105,12 +105,11 @@ const GetHistory = {
   UC_CODE: ERROR_PREFIX + "getHistory/",
   InvalidDtoIn: class extends ReferencedataMainUseCaseError {
     constructor(dtoOut, paramMap = {}, cause = null) {
-      super({ ...dtoOut, status: 400 }, paramMap, cause);
+      super(...arguments);
       this.code = `${GetHistory.UC_CODE}invalidDtoIn`;
       this.message = "DtoIn is not valid.";
     }
   }
-  // No specific "NotFound" for history, as it would just return an empty list.
 };
 
 module.exports = {

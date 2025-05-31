@@ -2,6 +2,7 @@
 "use strict";
 
 const { Validator } = require("uu_appg01_server").Validation;
+const { ValidationHelper } = require("uu_appg01_server").AppServer;
 const CountryMongo = require("../dao/country-mongo.js");
 const CurrencyMongo = require("../dao/currency-mongo.js");
 const CountryUseCaseError  = require("../api/errors/country-use-case-error.js");
@@ -22,9 +23,7 @@ class CountryAbl {
     // DTO validation against countryCreateDtoInType
     let validationResult = this.validator.validate("countryCreateDtoInType", dtoIn);
     if (!validationResult.isValid()) {
-      throw new CountryUseCaseError .Create.InvalidDtoIn({ // Assuming a generic Create error category
-        uuAppErrorMap: validationResult.getErrors(),
-      });
+      throw new CountryUseCaseError .Create.InvalidDtoIn(ValidationHelper.processValidationResult(dtoIn, validationResult));
     }
 
     // Business rule: Check if country with this isoCode already exists (as an active one)
@@ -64,9 +63,7 @@ class CountryAbl {
   async get(dtoIn) {
     let validationResult = this.validator.validate("countryGetDtoInType", dtoIn);
     if (!validationResult.isValid()) {
-      throw new CountryUseCaseError .Get.InvalidDtoIn({
-        uuAppErrorMap: validationResult.getErrors(),
-      });
+      throw new CountryUseCaseError .Get.InvalidDtoIn(ValidationHelper.processValidationResult(dtoIn, validationResult));
     }
 
     const country = await this.countryDao.getCurrent(dtoIn.awid, dtoIn.isoCode);
@@ -97,9 +94,7 @@ class CountryAbl {
   async update(dtoIn) {
     let validationResult = this.validator.validate("countryUpdateDtoInType", dtoIn);
     if (!validationResult.isValid()) {
-      throw new CountryUseCaseError .Update.InvalidDtoIn({
-        uuAppErrorMap: validationResult.getErrors(),
-      });
+      throw new CountryUseCaseError .Update.InvalidDtoIn(ValidationHelper.processValidationResult(dtoIn, validationResult));
     }
 
     // If currencyIsoCode is being updated, check if the new one exists
@@ -145,9 +140,7 @@ class CountryAbl {
   async archive(dtoIn) {
     let validationResult = this.validator.validate("countryArchiveDtoInType", dtoIn);
     if (!validationResult.isValid()) {
-      throw new CountryUseCaseError .Archive.InvalidDtoIn({
-        uuAppErrorMap: validationResult.getErrors(),
-      });
+      throw new CountryUseCaseError .Archive.InvalidDtoIn(ValidationHelper.processValidationResult(dtoIn, validationResult));
     }
 
     const archivedCountry = await this.countryDao.archive(dtoIn.awid, dtoIn.isoCode);
@@ -178,9 +171,7 @@ class CountryAbl {
   async listCurrent(dtoIn) {
     let validationResult = this.validator.validate("countryListDtoInType", dtoIn);
     if (!validationResult.isValid()) {
-      throw new CountryUseCaseError .ListCurrent.InvalidDtoIn({
-        uuAppErrorMap: validationResult.getErrors(),
-      });
+      throw new CountryUseCaseError .ListCurrent.InvalidDtoIn(ValidationHelper.processValidationResult(dtoIn, validationResult));
     }
 
     const countryListRaw = await this.countryDao.listCurrent(dtoIn.awid, dtoIn.pageInfo);
@@ -209,9 +200,7 @@ class CountryAbl {
   async getHistory(dtoIn) {
     let validationResult = this.validator.validate("countryGetHistoryDtoInType", dtoIn);
     if (!validationResult.isValid()) {
-      throw new CountryUseCaseError .GetHistory.InvalidDtoIn({
-        uuAppErrorMap: validationResult.getErrors(),
-      });
+      throw new CountryUseCaseError .GetHistory.InvalidDtoIn(ValidationHelper.processValidationResult(dtoIn, validationResult));
     }
 
     const historyRaw = await this.countryDao.getHistory(dtoIn.awid, dtoIn.isoCode);
@@ -242,9 +231,7 @@ class CountryAbl {
   async listByCurrency(dtoIn) {
     let validationResult = this.validator.validate("countryListByCurrencyDtoInType", dtoIn);
     if (!validationResult.isValid()) {
-      throw new CountryUseCaseError .ListByCurrency.InvalidDtoIn({
-        uuAppErrorMap: validationResult.getErrors(),
-      });
+      throw new CountryUseCaseError .ListByCurrency.InvalidDtoIn(ValidationHelper.processValidationResult(dtoIn, validationResult));
     }
 
     // Check if the currency itself exists and is active
