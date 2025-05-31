@@ -2785,5 +2785,262 @@
     "name": "uuCloud - production",
     "parentId": "env_e1d16f63ed1a7df50e96bf42827976fadec4ed1ffecc124cf70c30d56b5de959_1586440578_1592560665_1594385840_1746356473",
     "_type": "environment"
-  }]
+  },
+    {
+      "_id": "fld_currency_management_001",
+      "parentId": "wrk_577a898263927e9661876d4866e801b3de41bf3adaf886ab8454f6cc5e100cbd_1586440578_1592560665_1594385840_1746356473",
+      "name": "currency",
+      "metaSortKey": -1400000000000,
+      "created": 1670000000000,
+      "modified": 1670000000000,
+      "_type": "request_group"
+    },
+    {
+      "_id": "fld_country_management_001",
+      "parentId": "wrk_577a898263927e9661876d4866e801b3de41bf3adaf886ab8454f6cc5e100cbd_1586440578_1592560665_1594385840_1746356473",
+      "name": "country",
+      "metaSortKey": -1300000000000,
+      "created": 1670000000100,
+      "modified": 1670000000100,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_currency_create_001",
+      "parentId": "fld_currency_management_001",
+      "modified": 1670000001000,
+      "created": 1670000001000,
+      "url": "{{ host  }}/{{ contextPath  }}/{{ awid }}/currency/create",
+      "name": "currency/create",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"awid\": \"{{ awid }}\",\n\t\"isoCode\": \"TC1\",\n\t\"name\": \"Test Currency One\",\n\t\"validFrom\": \"2025-01-01T00:00:00Z\",\n\t\"validTo\": null\n}"
+      },
+      "parameters": [],
+      "headers": [{"name": "Content-Type", "value": "application/json", "id": "pair_curr_create_ct_001"}],
+      "authentication": {"token": "{{ token  }}", "type": "bearer"},
+      "metaSortKey": -1400001000000,
+      "_type": "request"
+    },
+    {
+      "_id": "req_currency_get_001",
+      "parentId": "fld_currency_management_001",
+      "modified": 1670000002000,
+      "created": 1670000002000,
+      "url": "{{ host  }}/{{ contextPath  }}/{{ awid }}/currency/get",
+      "name": "currency/get",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {"name": "awid", "value": "{{ awid }}", "id": "pair_curr_get_awid_001"},
+        {"name": "isoCode", "value": "TC1", "id": "pair_curr_get_iso_001"}
+      ],
+      "headers": [],
+      "authentication": {"token": "{{ token  }}", "type": "bearer"},
+      "metaSortKey": -1400002000000,
+      "_type": "request"
+    },
+    {
+      "_id": "req_currency_update_001",
+      "parentId": "fld_currency_management_001",
+      "modified": 1670000003000,
+      "created": 1670000003000,
+      "url": "{{ host  }}/{{ contextPath  }}/{{ awid }}/currency/update",
+      "name": "currency/update",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"awid\": \"{{ awid }}\",\n\t\"isoCode\": \"TC1\",\n\t\"name\": \"Test Currency Updated\",\n\t\"validFrom\": \"2025-02-01T00:00:00Z\"\n}"
+      },
+      "parameters": [],
+      "headers": [{"name": "Content-Type", "value": "application/json", "id": "pair_curr_upd_ct_001"}],
+      "authentication": {"token": "{{ token  }}", "type": "bearer"},
+      "metaSortKey": -1400003000000,
+      "_type": "request"
+    },
+    {
+      "_id": "req_currency_archive_001",
+      "parentId": "fld_currency_management_001",
+      "modified": 1670000004000,
+      "created": 1670000004000,
+      "url": "{{ host  }}/{{ contextPath  }}/{{ awid }}/currency/archive",
+      "name": "currency/archive",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"awid\": \"{{ awid }}\",\n\t\"isoCode\": \"TC1\"\n}"
+      },
+      "parameters": [],
+      "headers": [{"name": "Content-Type", "value": "application/json", "id": "pair_curr_arc_ct_001"}],
+      "authentication": {"token": "{{ token  }}", "type": "bearer"},
+      "metaSortKey": -1400004000000,
+      "_type": "request"
+    },
+    {
+      "_id": "req_currency_list_001",
+      "parentId": "fld_currency_management_001",
+      "modified": 1670000005000,
+      "created": 1670000005000,
+      "url": "{{ host  }}/{{ contextPath  }}/{{ awid }}/currency/listCurrent",
+      "name": "currency/listCurrent",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {"name": "awid", "value": "{{ awid }}", "id": "pair_curr_list_awid_001"},
+        {"name": "pageInfo[pageIndex]", "value": "0", "id": "pair_curr_list_pi_001"},
+        {"name": "pageInfo[pageSize]", "value": "10", "id": "pair_curr_list_ps_001"}
+      ],
+      "headers": [],
+      "authentication": {"token": "{{ token  }}", "type": "bearer"},
+      "metaSortKey": -1400005000000,
+      "_type": "request"
+    },
+    {
+      "_id": "req_currency_hist_001",
+      "parentId": "fld_currency_management_001",
+      "modified": 1670000006000,
+      "created": 1670000006000,
+      "url": "{{ host  }}/{{ contextPath  }}/{{ awid }}/currency/getHistory",
+      "name": "currency/getHistory",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {"name": "awid", "value": "{{ awid }}", "id": "pair_curr_hist_awid_001"},
+        {"name": "isoCode", "value": "TC1", "id": "pair_curr_hist_iso_001"}
+      ],
+      "headers": [],
+      "authentication": {"token": "{{ token  }}", "type": "bearer"},
+      "metaSortKey": -1400006000000,
+      "_type": "request"
+    },
+    {
+      "_id": "req_country_create_001",
+      "parentId": "fld_country_management_001",
+      "modified": 1670000011000,
+      "created": 1670000011000,
+      "url": "{{ host  }}/{{ contextPath  }}/{{ awid }}/country/create",
+      "name": "country/create",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"awid\": \"{{ awid }}\",\n\t\"isoCode\": \"TC\",\n\t\"name\": \"Testland\",\n\t\"currencyIsoCode\": \"TC1\",\n\t\"validFrom\": \"2025-01-01T00:00:00Z\",\n\t\"validTo\": null\n}"
+      },
+      "parameters": [],
+      "headers": [{"name": "Content-Type", "value": "application/json", "id": "pair_cntr_create_ct_001"}],
+      "authentication": {"token": "{{ token  }}", "type": "bearer"},
+      "metaSortKey": -1300001000000,
+      "_type": "request"
+    },
+    {
+      "_id": "req_country_get_001",
+      "parentId": "fld_country_management_001",
+      "modified": 1670000012000,
+      "created": 1670000012000,
+      "url": "{{ host  }}/{{ contextPath  }}/{{ awid }}/country/get",
+      "name": "country/get",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {"name": "awid", "value": "{{ awid }}", "id": "pair_cntr_get_awid_001"},
+        {"name": "isoCode", "value": "TC", "id": "pair_cntr_get_iso_001"}
+      ],
+      "headers": [],
+      "authentication": {"token": "{{ token  }}", "type": "bearer"},
+      "metaSortKey": -1300002000000,
+      "_type": "request"
+    },
+    {
+      "_id": "req_country_update_001",
+      "parentId": "fld_country_management_001",
+      "modified": 1670000013000,
+      "created": 1670000013000,
+      "url": "{{ host  }}/{{ contextPath  }}/{{ awid }}/country/update",
+      "name": "country/update",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"awid\": \"{{ awid }}\",\n\t\"isoCode\": \"TC\",\n\t\"name\": \"Testlandia\",\n\t\"currencyIsoCode\": \"TC1\",\n\t\"validFrom\": \"2025-03-01T00:00:00Z\"\n}"
+      },
+      "parameters": [],
+      "headers": [{"name": "Content-Type", "value": "application/json", "id": "pair_cntr_upd_ct_001"}],
+      "authentication": {"token": "{{ token  }}", "type": "bearer"},
+      "metaSortKey": -1300003000000,
+      "_type": "request"
+    },
+    {
+      "_id": "req_country_archive_001",
+      "parentId": "fld_country_management_001",
+      "modified": 1670000014000,
+      "created": 1670000014000,
+      "url": "{{ host  }}/{{ contextPath  }}/{{ awid }}/country/archive",
+      "name": "country/archive",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"awid\": \"{{ awid }}\",\n\t\"isoCode\": \"TC\"\n}"
+      },
+      "parameters": [],
+      "headers": [{"name": "Content-Type", "value": "application/json", "id": "pair_cntr_arc_ct_001"}],
+      "authentication": {"token": "{{ token  }}", "type": "bearer"},
+      "metaSortKey": -1300004000000,
+      "_type": "request"
+    },
+    {
+      "_id": "req_country_list_001",
+      "parentId": "fld_country_management_001",
+      "modified": 1670000015000,
+      "created": 1670000015000,
+      "url": "{{ host  }}/{{ contextPath  }}/{{ awid }}/country/listCurrent",
+      "name": "country/listCurrent",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {"name": "awid", "value": "{{ awid }}", "id": "pair_cntr_list_awid_001"},
+        {"name": "pageInfo[pageIndex]", "value": "0", "id": "pair_cntr_list_pi_001"},
+        {"name": "pageInfo[pageSize]", "value": "10", "id": "pair_cntr_list_ps_001"}
+      ],
+      "headers": [],
+      "authentication": {"token": "{{ token  }}", "type": "bearer"},
+      "metaSortKey": -1300005000000,
+      "_type": "request"
+    },
+    {
+      "_id": "req_country_hist_001",
+      "parentId": "fld_country_management_001",
+      "modified": 1670000016000,
+      "created": 1670000016000,
+      "url": "{{ host  }}/{{ contextPath  }}/{{ awid }}/country/getHistory",
+      "name": "country/getHistory",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {"name": "awid", "value": "{{ awid }}", "id": "pair_cntr_hist_awid_001"},
+        {"name": "isoCode", "value": "TC", "id": "pair_cntr_hist_iso_001"}
+      ],
+      "headers": [],
+      "authentication": {"token": "{{ token  }}", "type": "bearer"},
+      "metaSortKey": -1300006000000,
+      "_type": "request"
+    },
+    {
+      "_id": "req_country_listbycurr_001",
+      "parentId": "fld_country_management_001",
+      "modified": 1670000017000,
+      "created": 1670000017000,
+      "url": "{{ host  }}/{{ contextPath  }}/{{ awid }}/country/listByCurrency",
+      "name": "country/listByCurrency",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {"name": "awid", "value": "{{ awid }}", "id": "pair_cntr_listcurr_awid_001"},
+        {"name": "currencyIsoCode", "value": "TC1", "id": "pair_cntr_listcurr_iso_001"},
+        {"name": "pageInfo[pageIndex]", "value": "0", "id": "pair_cntr_listcurr_pi_001"},
+        {"name": "pageInfo[pageSize]", "value": "10", "id": "pair_cntr_listcurr_ps_001"}
+      ],
+      "headers": [],
+      "authentication": {"token": "{{ token  }}", "type": "bearer"},
+      "metaSortKey": -1300007000000,
+      "_type": "request"
+    }
+  ]
 }
