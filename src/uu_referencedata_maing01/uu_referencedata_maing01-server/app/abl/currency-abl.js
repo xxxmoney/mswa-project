@@ -2,7 +2,6 @@
 "use strict";
 
 const { Validator } = require("uu_appg01_server").Validation;
-const { DaoFactory, ObjectStoreError } = require("uu_appg01_server").ObjectStore;
 const CurrencyMongo = require("../dao/currency-mongo.js");
 const CurrencyUseCaseError = require("../api/errors/currency-use-case-error.js");
 
