@@ -4,8 +4,7 @@
 const { Validator } = require("uu_appg01_server").Validation;
 const { DaoFactory } = require("uu_appg01_server").ObjectStore;
 const { AppModelError } = require("uu_appg01_server").Error; // Generic error
-// Assuming UseCaseError structure like: ReferencedataMainUseCaseError.Command.Reason
-const ReferencedataMainUseCaseError = require("../api/errors/referencedata-main-use-case-error.js");
+const CurrencyUseCaseError = require("../api/errors/currency-use-case-error.js");
 
 const CurrencyDao = DaoFactory.getDao("currency");
 
@@ -22,14 +21,14 @@ class CurrencyAbl {
   async create(awid, dtoIn, session, authorizationResult) {
     let validationResult = this.validator.validate("currencyCreateDtoInType", dtoIn);
     if (!validationResult.isValid()) {
-      throw new ReferencedataMainUseCaseError.Create.InvalidDtoIn({
+      throw new CurrencyUseCaseError.Create.InvalidDtoIn({
         uuAppErrorMap: validationResult.getErrors(),
       });
     }
 
     const existingCurrency = await this.dao.getCurrent(awid, dtoIn.isoCode);
     if (existingCurrency) {
-      throw new ReferencedataMainUseCaseError.Create.CurrencyAlreadyExists({ awid, isoCode: dtoIn.isoCode });
+      throw new CurrencyUseCaseError.Create.CurrencyAlreadyExists({ awid, isoCode: dtoIn.isoCode });
     }
 
     const currencyToCreate = { ...dtoIn }; // DAO expects awid to be passed separately
@@ -39,7 +38,7 @@ class CurrencyAbl {
     try {
       createdCurrency = await this.dao.create(awid, currencyToCreate);
     } catch (e) {
-      throw new ReferencedataMainUseCaseError.Create.CurrencyDaoCreateFailed({ cause: e });
+      throw new CurrencyUseCaseError.Create.CurrencyDaoCreateFailed({ cause: e });
     }
 
     return {
@@ -55,14 +54,14 @@ class CurrencyAbl {
   async get(awid, dtoIn, session, authorizationResult) {
     let validationResult = this.validator.validate("currencyGetDtoInType", dtoIn);
     if (!validationResult.isValid()) {
-      throw new ReferencedataMainUseCaseError.Get.InvalidDtoIn({
+      throw new CurrencyUseCaseError.Get.InvalidDtoIn({
         uuAppErrorMap: validationResult.getErrors(),
       });
     }
 
     const currency = await this.dao.getCurrent(awid, dtoIn.isoCode);
     if (!currency) {
-      throw new ReferencedataMainUseCaseError.Get.CurrencyNotFound({ awid, isoCode: dtoIn.isoCode });
+      throw new CurrencyUseCaseError.Get.CurrencyNotFound({ awid, isoCode: dtoIn.isoCode });
     }
 
     return {
@@ -78,7 +77,7 @@ class CurrencyAbl {
   async update(awid, dtoIn, session, authorizationResult) {
     let validationResult = this.validator.validate("currencyUpdateDtoInType", dtoIn);
     if (!validationResult.isValid()) {
-      throw new ReferencedataMainUseCaseError.Update.InvalidDtoIn({
+      throw new CurrencyUseCaseError.Update.InvalidDtoIn({
         uuAppErrorMap: validationResult.getErrors(),
       });
     }
@@ -90,13 +89,13 @@ class CurrencyAbl {
 
       updatedCurrency = await this.dao.update(awid, isoCode, updateData);
     } catch (e) {
-      if (e.code === ReferencedataMainUseCaseError.Get.CurrencyNotFound.UC_CODE) { // Example if DAO throws specific not found
+      if (e.code === CurrencyUseCaseError.Get.CurrencyNotFound.UC_CODE) { // Example if DAO throws specific not found
         throw e;
       }
-      throw new ReferencedataMainUseCaseError.Update.CurrencyDaoUpdateFailed({ cause: e });
+      throw new CurrencyUseCaseError.Update.CurrencyDaoUpdateFailed({ cause: e });
     }
     if (!updatedCurrency) { // If DAO.update returns null on not finding a current to update.
-      throw new ReferencedataMainUseCaseError.Update.CurrencyNotFoundToUpdate({ awid, isoCode: dtoIn.isoCode });
+      throw new CurrencyUseCaseError.Update.CurrencyNotFoundToUpdate({ awid, isoCode: dtoIn.isoCode });
     }
 
 
@@ -113,14 +112,14 @@ class CurrencyAbl {
   async archive(awid, dtoIn, session, authorizationResult) {
     let validationResult = this.validator.validate("currencyArchiveDtoInType", dtoIn);
     if (!validationResult.isValid()) {
-      throw new ReferencedataMainUseCaseError.Archive.InvalidDtoIn({
+      throw new CurrencyUseCaseError.Archive.InvalidDtoIn({
         uuAppErrorMap: validationResult.getErrors(),
       });
     }
 
     const archivedCurrency = await this.dao.archive(awid, dtoIn.isoCode);
     if (!archivedCurrency) {
-      throw new ReferencedataMainUseCaseError.Archive.CurrencyNotFoundToArchive({ awid, isoCode: dtoIn.isoCode });
+      throw new CurrencyUseCaseError.Archive.CurrencyNotFoundToArchive({ awid, isoCode: dtoIn.isoCode });
     }
 
     return {
@@ -136,7 +135,7 @@ class CurrencyAbl {
   async listCurrent(awid, dtoIn, session, authorizationResult) {
     let validationResult = this.validator.validate("currencyListDtoInType", dtoIn);
     if (!validationResult.isValid()) {
-      throw new ReferencedataMainUseCaseError.ListCurrent.InvalidDtoIn({
+      throw new CurrencyUseCaseError.ListCurrent.InvalidDtoIn({
         uuAppErrorMap: validationResult.getErrors(),
       });
     }
@@ -157,7 +156,7 @@ class CurrencyAbl {
   async getHistory(awid, dtoIn, session, authorizationResult) {
     let validationResult = this.validator.validate("currencyGetHistoryDtoInType", dtoIn);
     if (!validationResult.isValid()) {
-      throw new ReferencedataMainUseCaseError.GetHistory.InvalidDtoIn({
+      throw new CurrencyUseCaseError.GetHistory.InvalidDtoIn({
         uuAppErrorMap: validationResult.getErrors(),
       });
     }
