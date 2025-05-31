@@ -6,7 +6,6 @@ const { ValidationHelper } = require("uu_appg01_server").AppServer;
 const CountryMongo = require("../dao/country-mongo.js");
 const CurrencyMongo = require("../dao/currency-mongo.js");
 const CountryUseCaseError = require("../api/errors/country-use-case-error.js");
-const CurrencyUseCaseError = require("../api/errors/currency-use-case-error");
 
 class CountryAbl {
   constructor() {
