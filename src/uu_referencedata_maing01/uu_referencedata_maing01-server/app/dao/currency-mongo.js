@@ -34,7 +34,7 @@ class CurrencyMongo extends UuObjectDao {
       return null;
     }
 
-    let oldVersionValidTo = new Date(newVersionValidFrom.getTime() - 1);
+    let oldVersionValidTo = new Date(newVersionValidFrom.getTime() - 1); // TODO: why?
     if (oldVersionValidTo < currentCurrency.validFrom) {
       oldVersionValidTo = newVersionValidFrom;
     }
@@ -42,7 +42,7 @@ class CurrencyMongo extends UuObjectDao {
     await super.findOneAndUpdate(
       { id: currentCurrency.id, awid },
       { validTo: oldVersionValidTo },
-      currentCurrency.sys && currentCurrency.sys.rev !== undefined ? "REVISION" : "NONE",
+      "NONE",
       null
     );
 

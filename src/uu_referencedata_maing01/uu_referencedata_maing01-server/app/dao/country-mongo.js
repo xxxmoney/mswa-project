@@ -35,7 +35,7 @@ class CountryMongo extends UuObjectDao {
       return null;
     }
 
-    let oldVersionValidTo = new Date(newVersionValidFrom.getTime() - 1);
+    let oldVersionValidTo = new Date(newVersionValidFrom.getTime() - 1); // TODO: why?
     if (oldVersionValidTo < currentCountry.validFrom) {
       oldVersionValidTo = newVersionValidFrom;
     }
@@ -43,7 +43,7 @@ class CountryMongo extends UuObjectDao {
     await super.findOneAndUpdate(
       { id: currentCountry.id, awid },
       { validTo: oldVersionValidTo },
-      currentCountry.sys && currentCountry.sys.rev !== undefined ? "REVISION" : "NONE",
+      "NONE",
       null
     );
 
