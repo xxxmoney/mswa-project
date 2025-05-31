@@ -13,9 +13,7 @@ class CountryController {
    * Profile: Authorities
    */
   async create(ucEnv) {
-    const { awid, dtoIn, session, authorizationResult } = ucEnv;
-    const dtoOut = await this.abl.create(awid, dtoIn, session, authorizationResult);
-    ucEnv.res.json(dtoOut);
+    return await this.abl.create(ucEnv.getDtoIn());
   }
 
   /**
@@ -24,9 +22,7 @@ class CountryController {
    * Profile: Readers, Authorities
    */
   async get(ucEnv) {
-    const { awid, dtoIn, session, authorizationResult } = ucEnv;
-    const dtoOut = await this.abl.get(awid, dtoIn, session, authorizationResult);
-    ucEnv.res.json(dtoOut);
+    return await this.abl.get(ucEnv.getDtoIn());
   }
 
   /**
@@ -35,9 +31,7 @@ class CountryController {
    * Profile: Authorities
    */
   async update(ucEnv) {
-    const { awid, dtoIn, session, authorizationResult } = ucEnv;
-    const dtoOut = await this.abl.update(awid, dtoIn, session, authorizationResult);
-    ucEnv.res.json(dtoOut);
+    return await this.abl.update(ucEnv.getDtoIn());
   }
 
   /**
@@ -46,9 +40,7 @@ class CountryController {
    * Profile: Authorities
    */
   async archive(ucEnv) {
-    const { awid, dtoIn, session, authorizationResult } = ucEnv;
-    const dtoOut = await this.abl.archive(awid, dtoIn, session, authorizationResult);
-    ucEnv.res.json(dtoOut);
+    return await this.abl.archive(ucEnv.getDtoIn());
   }
 
   /**
@@ -57,9 +49,7 @@ class CountryController {
    * Profile: Readers, Authorities
    */
   async listCurrent(ucEnv) {
-    const { awid, dtoIn, session, authorizationResult } = ucEnv;
-    const dtoOut = await this.abl.listCurrent(awid, dtoIn, session, authorizationResult);
-    ucEnv.res.json(dtoOut);
+    return await this.abl.listCurrent(ucEnv.getDtoIn());
   }
 
   /**
@@ -68,9 +58,7 @@ class CountryController {
    * Profile: Readers, Authorities
    */
   async getHistory(ucEnv) {
-    const { awid, dtoIn, session, authorizationResult } = ucEnv;
-    const dtoOut = await this.abl.getHistory(awid, dtoIn, session, authorizationResult);
-    ucEnv.res.json(dtoOut);
+    return await this.abl.getHistory(ucEnv.getDtoIn());
   }
 
   /**
@@ -79,9 +67,7 @@ class CountryController {
    * Profile: Readers, Authorities
    */
   async listByCurrency(ucEnv) {
-    const { awid, dtoIn, session, authorizationResult } = ucEnv;
-    const dtoOut = await this.abl.listByCurrency(awid, dtoIn, session, authorizationResult);
-    ucEnv.res.json(dtoOut);
+    return await this.abl.listByCurrency(ucEnv.getDtoIn());
   }
 }
 

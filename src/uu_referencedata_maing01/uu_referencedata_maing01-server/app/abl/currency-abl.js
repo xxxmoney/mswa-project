@@ -16,7 +16,7 @@ class CurrencyAbl {
    * Creates a new currency version
    * Profile: Authorities
    */
-  async create(awid, dtoIn, session, authorizationResult) {
+  async create(dtoIn) {
     let validationResult = this.validator.validate("currencyCreateDtoInType", dtoIn);
     if (!validationResult.isValid()) {
       throw new CurrencyUseCaseError.Create.InvalidDtoIn({
@@ -24,7 +24,7 @@ class CurrencyAbl {
       });
     }
 
-    const existingCurrency = await this.dao.getCurrent(awid, dtoIn.isoCode);
+    const existingCurrency = await this.dao.getCurrent(dtoIn.awid, dtoIn.isoCode);
     if (existingCurrency) {
       throw new CurrencyUseCaseError.Create.CurrencyAlreadyExists({ awid, isoCode: dtoIn.isoCode });
     }
@@ -34,7 +34,7 @@ class CurrencyAbl {
 
     let createdCurrency;
     try {
-      createdCurrency = await this.dao.create(awid, currencyToCreate);
+      createdCurrency = await this.dao.create(dtoIn.awid, currencyToCreate);
     } catch (e) {
       throw new CurrencyUseCaseError.Create.CurrencyDaoCreateFailed({ cause: e });
     }
@@ -49,7 +49,7 @@ class CurrencyAbl {
    * Gets the current version of a currency
    * Profile: Readers, Authorities (or any authenticated user)
    */
-  async get(awid, dtoIn, session, authorizationResult) {
+  async get(dtoIn) {
     let validationResult = this.validator.validate("currencyGetDtoInType", dtoIn);
     if (!validationResult.isValid()) {
       throw new CurrencyUseCaseError.Get.InvalidDtoIn({
@@ -57,9 +57,9 @@ class CurrencyAbl {
       });
     }
 
-    const currency = await this.dao.getCurrent(awid, dtoIn.isoCode);
+    const currency = await this.dao.getCurrent(dtoIn.awid, dtoIn.isoCode);
     if (!currency) {
-      throw new CurrencyUseCaseError.Get.CurrencyNotFound({ awid, isoCode: dtoIn.isoCode });
+      throw new CurrencyUseCaseError.Get.CurrencyNotFound({ awid: dtoIn.awid, isoCode: dtoIn.isoCode });
     }
 
     return {
@@ -72,7 +72,7 @@ class CurrencyAbl {
    * Updates a currency, creating a new version
    * Profile: Authorities
    */
-  async update(awid, dtoIn, session, authorizationResult) {
+  async update(dtoIn) {
     let validationResult = this.validator.validate("currencyUpdateDtoInType", dtoIn);
     if (!validationResult.isValid()) {
       throw new CurrencyUseCaseError.Update.InvalidDtoIn({
@@ -85,7 +85,7 @@ class CurrencyAbl {
       const { isoCode, ...updateData } = dtoIn;
       delete updateData.awid;
 
-      updatedCurrency = await this.dao.update(awid, isoCode, updateData);
+      updatedCurrency = await this.dao.update(dtoIn.awid, isoCode, updateData);
     } catch (e) {
       if (e.code === CurrencyUseCaseError.Get.CurrencyNotFound.UC_CODE) { // Example if DAO throws specific not found
         throw e;
@@ -93,7 +93,7 @@ class CurrencyAbl {
       throw new CurrencyUseCaseError.Update.CurrencyDaoUpdateFailed({ cause: e });
     }
     if (!updatedCurrency) { // If DAO.update returns null on not finding a current to update.
-      throw new CurrencyUseCaseError.Update.CurrencyNotFoundToUpdate({ awid, isoCode: dtoIn.isoCode });
+      throw new CurrencyUseCaseError.Update.CurrencyNotFoundToUpdate({ awid: dtoIn.awid, isoCode: dtoIn.isoCode });
     }
 
 
@@ -107,7 +107,7 @@ class CurrencyAbl {
    * Archives the current version of a currency
    * Profile: Authorities
    */
-  async archive(awid, dtoIn, session, authorizationResult) {
+  async archive(dtoIn) {
     let validationResult = this.validator.validate("currencyArchiveDtoInType", dtoIn);
     if (!validationResult.isValid()) {
       throw new CurrencyUseCaseError.Archive.InvalidDtoIn({
@@ -115,9 +115,9 @@ class CurrencyAbl {
       });
     }
 
-    const archivedCurrency = await this.dao.archive(awid, dtoIn.isoCode);
+    const archivedCurrency = await this.dao.archive(dtoIn.awid, dtoIn.isoCode);
     if (!archivedCurrency) {
-      throw new CurrencyUseCaseError.Archive.CurrencyNotFoundToArchive({ awid, isoCode: dtoIn.isoCode });
+      throw new CurrencyUseCaseError.Archive.CurrencyNotFoundToArchive({ awid: dtoIn.awid, isoCode: dtoIn.isoCode });
     }
 
     return {
@@ -130,7 +130,7 @@ class CurrencyAbl {
    * Lists currently active currencies
    * Profile: Readers, Authorities (or any authenticated user)
    */
-  async listCurrent(awid, dtoIn, session, authorizationResult) {
+  async listCurrent(dtoIn) {
     let validationResult = this.validator.validate("currencyListDtoInType", dtoIn);
     if (!validationResult.isValid()) {
       throw new CurrencyUseCaseError.ListCurrent.InvalidDtoIn({
@@ -138,7 +138,7 @@ class CurrencyAbl {
       });
     }
 
-    const currencyList = await this.dao.listCurrent(awid, dtoIn.pageInfo);
+    const currencyList = await this.dao.listCurrent(dtoIn.awid, dtoIn.pageInfo);
 
     return {
       itemList: currencyList,
@@ -151,7 +151,7 @@ class CurrencyAbl {
    * Gets the history of a currency
    * Profile: Readers, Authorities (or any authenticated user)
    */
-  async getHistory(awid, dtoIn, session, authorizationResult) {
+  async getHistory(dtoIn) {
     let validationResult = this.validator.validate("currencyGetHistoryDtoInType", dtoIn);
     if (!validationResult.isValid()) {
       throw new CurrencyUseCaseError.GetHistory.InvalidDtoIn({
@@ -159,7 +159,7 @@ class CurrencyAbl {
       });
     }
 
-    const history = await this.dao.getHistory(awid, dtoIn.isoCode);
+    const history = await this.dao.getHistory(dtoIn.awid, dtoIn.isoCode);
     return {
       itemList: history,
       uuAppErrorMap: {},

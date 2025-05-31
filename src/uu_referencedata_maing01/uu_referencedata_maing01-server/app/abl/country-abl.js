@@ -18,7 +18,7 @@ class CountryAbl {
    * Creates a new country version
    * Profile: Authorities
    */
-  async create(awid, dtoIn, session, authorizationResult) {
+  async create(dtoIn) {
     // DTO validation against countryCreateDtoInType
     let validationResult = this.validator.validate("countryCreateDtoInType", dtoIn);
     if (!validationResult.isValid()) {
@@ -28,15 +28,15 @@ class CountryAbl {
     }
 
     // Business rule: Check if country with this isoCode already exists (as an active one)
-    const existingCountry = await this.countryDao.getCurrent(awid, dtoIn.isoCode);
+    const existingCountry = await this.countryDao.getCurrent(dtoIn.awid, dtoIn.isoCode);
     if (existingCountry) {
-      throw new CountryUseCaseError .Create.CountryAlreadyExists({ awid, isoCode: dtoIn.isoCode });
+      throw new CountryUseCaseError .Create.CountryAlreadyExists({ awid: dtoIn.awid, isoCode: dtoIn.isoCode });
     }
 
     // Business rule: Check if the linked currencyIsoCode exists and is active
-    const linkedCurrency = await this.currencyDao.getCurrent(awid, dtoIn.currencyIsoCode);
+    const linkedCurrency = await this.currencyDao.getCurrent(dtoIn.awid, dtoIn.currencyIsoCode);
     if (!linkedCurrency) {
-      throw new CountryUseCaseError .Create.LinkedCurrencyNotFound({ awid, currencyIsoCode: dtoIn.currencyIsoCode });
+      throw new CountryUseCaseError .Create.LinkedCurrencyNotFound({ awid: dtoIn.awid, currencyIsoCode: dtoIn.currencyIsoCode });
     }
 
     const countryToCreate = { ...dtoIn };
@@ -44,7 +44,7 @@ class CountryAbl {
 
     let createdCountry;
     try {
-      createdCountry = await this.countryDao.create(awid, countryToCreate);
+      createdCountry = await this.countryDao.create(dtoIn.awid, countryToCreate);
     } catch (e) {
       throw new CountryUseCaseError .Create.CountryDaoCreateFailed({ cause: e });
     }
@@ -61,7 +61,7 @@ class CountryAbl {
    * Gets the current version of a country
    * Profile: Readers, Authorities
    */
-  async get(awid, dtoIn, session, authorizationResult) {
+  async get(dtoIn) {
     let validationResult = this.validator.validate("countryGetDtoInType", dtoIn);
     if (!validationResult.isValid()) {
       throw new CountryUseCaseError .Get.InvalidDtoIn({
@@ -69,15 +69,15 @@ class CountryAbl {
       });
     }
 
-    const country = await this.countryDao.getCurrent(awid, dtoIn.isoCode);
+    const country = await this.countryDao.getCurrent(dtoIn.awid, dtoIn.isoCode);
     if (!country) {
-      throw new CountryUseCaseError .Get.CountryNotFound({ awid, isoCode: dtoIn.isoCode });
+      throw new CountryUseCaseError .Get.CountryNotFound({ awid: dtoIn.awid, isoCode: dtoIn.isoCode });
     }
 
     // Optionally, enrich with current currency name
     let currencyName = "N/A";
     if (country.currencyIsoCode) {
-      const currency = await this.currencyDao.getCurrent(awid, country.currencyIsoCode);
+      const currency = await this.currencyDao.getCurrent(dtoIn.awid, country.currencyIsoCode);
       if (currency) {
         currencyName = currency.name;
       }
@@ -94,7 +94,7 @@ class CountryAbl {
    * Updates a country, creating a new version
    * Profile: Authorities
    */
-  async update(awid, dtoIn, session, authorizationResult) {
+  async update(dtoIn) {
     let validationResult = this.validator.validate("countryUpdateDtoInType", dtoIn);
     if (!validationResult.isValid()) {
       throw new CountryUseCaseError .Update.InvalidDtoIn({
@@ -104,9 +104,9 @@ class CountryAbl {
 
     // If currencyIsoCode is being updated, check if the new one exists
     if (dtoIn.currencyIsoCode) {
-      const linkedCurrency = await this.currencyDao.getCurrent(awid, dtoIn.currencyIsoCode);
+      const linkedCurrency = await this.currencyDao.getCurrent(dtoIn.awid, dtoIn.currencyIsoCode);
       if (!linkedCurrency) {
-        throw new CountryUseCaseError .Update.LinkedCurrencyNotFound({ awid, currencyIsoCode: dtoIn.currencyIsoCode });
+        throw new CountryUseCaseError .Update.LinkedCurrencyNotFound({ awid: dtoIn.awid, currencyIsoCode: dtoIn.currencyIsoCode });
       }
     }
 
@@ -114,18 +114,18 @@ class CountryAbl {
     try {
       const { isoCode, ...updateData } = dtoIn;
       delete updateData.awid;
-      updatedCountry = await this.countryDao.update(awid, isoCode, updateData);
+      updatedCountry = await this.countryDao.update(dtoIn.awid, isoCode, updateData);
     } catch (e) {
       throw new CountryUseCaseError .Update.CountryDaoUpdateFailed({ cause: e });
     }
     if (!updatedCountry) {
-      throw new CountryUseCaseError .Update.CountryNotFoundToUpdate({ awid, isoCode: dtoIn.isoCode });
+      throw new CountryUseCaseError .Update.CountryNotFoundToUpdate({ awid: dtoIn.awid, isoCode: dtoIn.isoCode });
     }
 
     // Optionally enrich with current currency name for the DtoOut
     let currencyName = "N/A";
     if (updatedCountry.currencyIsoCode) {
-      const currency = await this.currencyDao.getCurrent(awid, updatedCountry.currencyIsoCode);
+      const currency = await this.currencyDao.getCurrent(dtoIn.awid, updatedCountry.currencyIsoCode);
       if (currency) {
         currencyName = currency.name;
       }
@@ -142,7 +142,7 @@ class CountryAbl {
    * Archives the current version of a country
    * Profile: Authorities
    */
-  async archive(awid, dtoIn, session, authorizationResult) {
+  async archive(dtoIn) {
     let validationResult = this.validator.validate("countryArchiveDtoInType", dtoIn);
     if (!validationResult.isValid()) {
       throw new CountryUseCaseError .Archive.InvalidDtoIn({
@@ -150,15 +150,15 @@ class CountryAbl {
       });
     }
 
-    const archivedCountry = await this.countryDao.archive(awid, dtoIn.isoCode);
+    const archivedCountry = await this.countryDao.archive(dtoIn.awid, dtoIn.isoCode);
     if (!archivedCountry) {
-      throw new CountryUseCaseError .Archive.CountryNotFoundToArchive({ awid, isoCode: dtoIn.isoCode });
+      throw new CountryUseCaseError .Archive.CountryNotFoundToArchive({ awid: dtoIn.awid, isoCode: dtoIn.isoCode });
     }
 
     // Optionally enrich with currency name
     let currencyName = "N/A";
     if (archivedCountry.currencyIsoCode) {
-      const currency = await this.currencyDao.getCurrent(awid, archivedCountry.currencyIsoCode);
+      const currency = await this.currencyDao.getCurrent(dtoIn.awid, archivedCountry.currencyIsoCode);
       if (currency) {
         currencyName = currency.name;
       }
@@ -175,7 +175,7 @@ class CountryAbl {
    * Lists currently active countries
    * Profile: Readers, Authorities
    */
-  async listCurrent(awid, dtoIn, session, authorizationResult) {
+  async listCurrent(dtoIn) {
     let validationResult = this.validator.validate("countryListDtoInType", dtoIn);
     if (!validationResult.isValid()) {
       throw new CountryUseCaseError .ListCurrent.InvalidDtoIn({
@@ -183,13 +183,13 @@ class CountryAbl {
       });
     }
 
-    const countryListRaw = await this.countryDao.listCurrent(awid, dtoIn.pageInfo);
+    const countryListRaw = await this.countryDao.listCurrent(dtoIn.awid, dtoIn.pageInfo);
 
     // Enrich items with currency names
     const itemList = await Promise.all(countryListRaw.map(async (country) => {
       let currencyName = "N/A";
       if (country.currencyIsoCode) {
-        const currency = await this.currencyDao.getCurrent(awid, country.currencyIsoCode);
+        const currency = await this.currencyDao.getCurrent(dtoIn.awid, country.currencyIsoCode);
         if (currency) currencyName = currency.name;
       }
       return {...country, currencyName};
@@ -206,7 +206,7 @@ class CountryAbl {
    * Gets the history of a country
    * Profile: Readers, Authorities
    */
-  async getHistory(awid, dtoIn, session, authorizationResult) {
+  async getHistory(dtoIn) {
     let validationResult = this.validator.validate("countryGetHistoryDtoInType", dtoIn);
     if (!validationResult.isValid()) {
       throw new CountryUseCaseError .GetHistory.InvalidDtoIn({
@@ -214,7 +214,7 @@ class CountryAbl {
       });
     }
 
-    const historyRaw = await this.countryDao.getHistory(awid, dtoIn.isoCode);
+    const historyRaw = await this.countryDao.getHistory(dtoIn.awid, dtoIn.isoCode);
 
     // Enrich items with currency names
     const itemList = await Promise.all(historyRaw.map(async (countryVersion) => {
@@ -223,7 +223,7 @@ class CountryAbl {
         // For history, we might want the currency as it was, but our currency DAO gives current.
         // If currencies are versioned, a more complex lookup for currency version valid at countryVersion's time might be needed.
         // For simplicity, using current name of the linked currency.
-        const currency = await this.currencyDao.getCurrent(awid, countryVersion.currencyIsoCode);
+        const currency = await this.currencyDao.getCurrent(dtoIn.awid, countryVersion.currencyIsoCode);
         if (currency) currencyName = currency.name;
       }
       return {...countryVersion, currencyName};
@@ -239,7 +239,7 @@ class CountryAbl {
    * Lists currently active countries by currency
    * Profile: Readers, Authorities
    */
-  async listByCurrency(awid, dtoIn, session, authorizationResult) {
+  async listByCurrency(dtoIn) {
     let validationResult = this.validator.validate("countryListByCurrencyDtoInType", dtoIn);
     if (!validationResult.isValid()) {
       throw new CountryUseCaseError .ListByCurrency.InvalidDtoIn({
@@ -248,12 +248,12 @@ class CountryAbl {
     }
 
     // Check if the currency itself exists and is active
-    const currency = await this.currencyDao.getCurrent(awid, dtoIn.currencyIsoCode);
+    const currency = await this.currencyDao.getCurrent(dtoIn.awid, dtoIn.currencyIsoCode);
     if (!currency) {
-      throw new CountryUseCaseError .ListByCurrency.CurrencyNotFound({ awid, currencyIsoCode: dtoIn.currencyIsoCode });
+      throw new CountryUseCaseError .ListByCurrency.CurrencyNotFound({ awid: dtoIn.awid, currencyIsoCode: dtoIn.currencyIsoCode });
     }
 
-    const countryListRaw = await this.countryDao.listByCurrency(awid, dtoIn.currencyIsoCode, dtoIn.pageInfo);
+    const countryListRaw = await this.countryDao.listByCurrency(dtoIn.awid, dtoIn.currencyIsoCode, dtoIn.pageInfo);
 
     // Enrich with currency names (will be the same for all, i.e., currency.name)
     const itemList = countryListRaw.map(country => ({
