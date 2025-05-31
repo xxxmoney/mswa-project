@@ -156,11 +156,6 @@ class CountryAbl {
    * Profile: Readers, Authorities
    */
   async listCurrent(dtoIn) {
-    dtoIn.pageInfo ??= {};
-
-    console.log("HERE")
-    console.log(dtoIn)
-
     let validationResult = this.validator.validate("countryListDtoInType", dtoIn);
     ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CountryUseCaseError.ListCurrent.InvalidDtoIn);
 
