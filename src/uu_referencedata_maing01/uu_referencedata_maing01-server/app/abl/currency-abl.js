@@ -23,7 +23,7 @@ class CurrencyAbl {
 
     const existingCurrency = await currencyDao.getCurrent(dtoIn.awid, dtoIn.isoCode);
     if (existingCurrency) {
-      throw new CurrencyUseCaseError.Create.CurrencyAlreadyExists({ awid, isoCode: dtoIn.isoCode });
+      throw new CurrencyUseCaseError.Create.CurrencyAlreadyExists({ awid: dtoIn.awid, isoCode: dtoIn.isoCode });
     }
 
     const currencyToCreate = { ...dtoIn }; // DAO expects awid to be passed separately
