@@ -6,6 +6,12 @@
       "schemaMap": {
         "referencedataMain": {
           "realization": "dao/ReferencedataMainMongo"
+        },
+        "country": {
+          "realization": "dao/CountryMongo"
+        },
+        "currency": {
+          "realization": "dao/CurrencyMongo"
         }
       }
     }
