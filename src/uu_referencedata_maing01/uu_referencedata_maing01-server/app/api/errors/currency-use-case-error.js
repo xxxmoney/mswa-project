@@ -105,7 +105,7 @@ const GetHistory = {
   UC_CODE: ERROR_PREFIX + "getHistory/",
   InvalidDtoIn: class extends ReferencedataMainUseCaseError {
     constructor(dtoOut, paramMap = {}, cause = null) {
-      super(...arguments);
+      super({ ...dtoOut, status: 400 }, paramMap, cause);
       this.code = `${GetHistory.UC_CODE}invalidDtoIn`;
       this.message = "DtoIn is not valid.";
     }
