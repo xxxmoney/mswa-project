@@ -2847,7 +2847,7 @@
       "created": 1670000003000,
       "url": "{{ host  }}/{{ contextPath  }}/{{ awid }}/currency/update",
       "name": "currency/update",
-      "method": "POST",
+      "method": "PUT",
       "body": {
         "mimeType": "application/json",
         "text": "{\n\t\"awid\": \"{{ awid }}\",\n\t\"isoCode\": \"TC1\",\n\t\"name\": \"Test Currency Updated\",\n\t\"validFrom\": \"2025-02-01T00:00:00Z\"\n}"
@@ -2956,7 +2956,7 @@
       "created": 1670000013000,
       "url": "{{ host  }}/{{ contextPath  }}/{{ awid }}/country/update",
       "name": "country/update",
-      "method": "POST",
+      "method": "PUT",
       "body": {
         "mimeType": "application/json",
         "text": "{\n\t\"awid\": \"{{ awid }}\",\n\t\"isoCode\": \"TC\",\n\t\"name\": \"Testlandia\",\n\t\"currencyIsoCode\": \"TC1\",\n\t\"validFrom\": \"2025-03-01T00:00:00Z\"\n}"
