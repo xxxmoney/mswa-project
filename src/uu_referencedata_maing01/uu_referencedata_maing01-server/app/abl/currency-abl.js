@@ -3,14 +3,11 @@
 
 const { Validator } = require("uu_appg01_server").Validation;
 const { ValidationHelper } = require("uu_appg01_server").AppServer;
-const CurrencyMongo = require("../dao/currency-mongo.js");
 const CurrencyUseCaseError = require("../api/errors/currency-use-case-error.js");
 
 class CurrencyAbl {
   constructor() {
     this.validator = Validator.load();
-
-    this.dao = CurrencyMongo;
   }
 
   /**
@@ -21,7 +18,9 @@ class CurrencyAbl {
     let validationResult = this.validator.validate("currencyCreateDtoInType", dtoIn);
     ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CurrencyUseCaseError.Create.InvalidDtoIn);
 
-    const existingCurrency = await this.dao.getCurrent(dtoIn.awid, dtoIn.isoCode);
+    const currencyDao = DaoFactory.getDao("currency");
+
+    const existingCurrency = await currencyDao.getCurrent(dtoIn.awid, dtoIn.isoCode);
     if (existingCurrency) {
       throw new CurrencyUseCaseError.Create.CurrencyAlreadyExists({ awid, isoCode: dtoIn.isoCode });
     }
@@ -31,7 +30,7 @@ class CurrencyAbl {
 
     let createdCurrency;
     try {
-      createdCurrency = await this.dao.create(dtoIn.awid, currencyToCreate);
+      createdCurrency = await currencyDao.create(dtoIn.awid, currencyToCreate);
     } catch (e) {
       throw new CurrencyUseCaseError.Create.CurrencyDaoCreateFailed({ cause: e });
     }
@@ -50,7 +49,9 @@ class CurrencyAbl {
     let validationResult = this.validator.validate("currencyGetDtoInType", dtoIn);
     ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CurrencyUseCaseError.Get.InvalidDtoIn);
 
-    const currency = await this.dao.getCurrent(dtoIn.awid, dtoIn.isoCode);
+    const currencyDao = DaoFactory.getDao("currency");
+
+    const currency = await currencyDao.getCurrent(dtoIn.awid, dtoIn.isoCode);
     if (!currency) {
       throw new CurrencyUseCaseError.Get.CurrencyNotFound({ awid: dtoIn.awid, isoCode: dtoIn.isoCode });
     }
@@ -69,12 +70,14 @@ class CurrencyAbl {
     let validationResult = this.validator.validate("currencyUpdateDtoInType", dtoIn);
     ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CurrencyUseCaseError.Update.InvalidDtoIn)
 
+    const currencyDao = DaoFactory.getDao("currency");
+
     let updatedCurrency;
     try {
       const { isoCode, ...updateData } = dtoIn;
       delete updateData.awid;
 
-      updatedCurrency = await this.dao.update(dtoIn.awid, isoCode, updateData);
+      updatedCurrency = await currencyDao.update(dtoIn.awid, isoCode, updateData);
     } catch (e) {
       if (e.code === CurrencyUseCaseError.Get.CurrencyNotFound.UC_CODE) { // Example if DAO throws specific not found
         throw e;
@@ -100,7 +103,9 @@ class CurrencyAbl {
     let validationResult = this.validator.validate("currencyArchiveDtoInType", dtoIn);
     ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CurrencyUseCaseError.Archive.InvalidDtoIn);
 
-    const archivedCurrency = await this.dao.archive(dtoIn.awid, dtoIn.isoCode);
+    const currencyDao = DaoFactory.getDao("currency");
+
+    const archivedCurrency = await currencyDao.archive(dtoIn.awid, dtoIn.isoCode);
     if (!archivedCurrency) {
       throw new CurrencyUseCaseError.Archive.CurrencyNotFoundToArchive({ awid: dtoIn.awid, isoCode: dtoIn.isoCode });
     }
@@ -119,7 +124,9 @@ class CurrencyAbl {
     let validationResult = this.validator.validate("currencyListDtoInType", dtoIn);
     ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CurrencyUseCaseError.ListCurrent.InvalidDtoIn);
 
-    const currencyList = await this.dao.listCurrent(dtoIn.awid, dtoIn.pageInfo);
+    const currencyDao = DaoFactory.getDao("currency");
+
+    const currencyList = await currencyDao.listCurrent(dtoIn.awid, dtoIn.pageInfo);
 
     return {
       itemList: currencyList,
@@ -136,7 +143,9 @@ class CurrencyAbl {
     let validationResult = this.validator.validate("currencyGetHistoryDtoInType", dtoIn);
     ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CurrencyUseCaseError.GetHistory.InvalidDtoIn);
 
-    const history = await this.dao.getHistory(dtoIn.awid, dtoIn.isoCode);
+    const currencyDao = DaoFactory.getDao("currency");
+
+    const history = await currencyDao.getHistory(dtoIn.awid, dtoIn.isoCode);
     return {
       itemList: history,
       uuAppErrorMap: {},
