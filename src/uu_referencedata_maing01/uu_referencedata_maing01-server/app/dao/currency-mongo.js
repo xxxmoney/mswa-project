@@ -9,17 +9,18 @@ class CurrencyMongo extends UuObjectDao {
   }
 
   async create(awid, dtoIn) {
-    const currency = {
+    const currencyToInsert = {
       awid,
       isoCode: dtoIn.isoCode,
       name: dtoIn.name,
       validFrom: dtoIn.validFrom ? new Date(dtoIn.validFrom) : new Date(),
       validTo: dtoIn.validTo ? new Date(dtoIn.validTo) : null,
     };
-    return await super.insertOne(currency);
+    return await super.insertOne(currencyToInsert);
   }
 
   async getCurrent(awid, isoCode) {
+    // super.findOne handles _id conversion and returns object with 'id' instead of '_id'
     return await super.findOne({ awid, isoCode, validTo: null });
   }
 
@@ -29,56 +30,70 @@ class CurrencyMongo extends UuObjectDao {
 
     const currentCurrency = await super.findOne({ awid, isoCode: isoCodeToUpdate, validTo: null });
 
-    if (currentCurrency) {
-      let oldVersionValidTo = new Date(newVersionValidFrom.getTime() - 1); // Ends 1ms before new one starts
-      if (oldVersionValidTo < currentCurrency.validFrom) {
-        oldVersionValidTo = newVersionValidFrom;
-      }
-
-      await super.updateOne(
-        { _id: currentCurrency._id },
-        { $set: { validTo: oldVersionValidTo } }
-      );
+    if (!currentCurrency) {
+      return null;
     }
 
-    // Create the new version
-    const newCurrencyVersion = {
+    let oldVersionValidTo = new Date(newVersionValidFrom.getTime() - 1);
+    if (oldVersionValidTo < currentCurrency.validFrom) {
+      oldVersionValidTo = newVersionValidFrom;
+    }
+
+    await super.findOneAndUpdate(
+      { id: currentCurrency.id, awid },
+      { validTo: oldVersionValidTo },
+      currentCurrency.sys && currentCurrency.sys.rev !== undefined ? "REVISION" : "NONE",
+      null
+    );
+
+    const newCurrencyVersionData = {
       awid,
       isoCode: isoCodeToUpdate,
-      name: dtoIn.name || (currentCurrency ? currentCurrency.name : "Unknown"),
+      name: dtoIn.name || currentCurrency.name,
       validFrom: newVersionValidFrom,
       validTo: null,
     };
-    return await super.insertOne(newCurrencyVersion);
+    return await super.insertOne(newCurrencyVersionData);
   }
 
   async archive(awid, isoCode) {
-    const result = await super.updateOne(
+    const updatedDocument = await super.findOneAndUpdate(
       { awid, isoCode, validTo: null },
-      { $set: { validTo: new Date() } }
+      { validTo: new Date() },
+      "NONE",
+      null
     );
 
-    // If updated successfully
-    if (result.modifiedCount === 1) {
-      // $ne - not equal
-      return await super.findOne({awid, isoCode, validTo: {$ne: null}, $orderby: {validTo: -1}});
+    if (!updatedDocument) {
+      const findResult = await super.find(
+        { awid, isoCode, validTo: { $ne: null } },
+        { pageIndex: 0, pageSize: 1 },
+        { validTo: -1 }, // Descending
+        null
+      );
+      return findResult.itemList && findResult.itemList.length > 0 ? findResult.itemList[0] : null;
     }
-
-    return null;
+    return updatedDocument;
   }
 
   async listCurrent(awid, pageInfo = {}) {
-    const { pageIndex = 0, pageSize = 100 } = pageInfo;
-    return await super.find({ awid, validTo: null })
-      .skip(pageIndex * pageSize)
-      .limit(pageSize)
-      .toArray();
+    const result = await super.find(
+      { awid, validTo: null },
+      pageInfo,
+      null,
+      null
+    );
+    return result.itemList;
   }
 
-  async getHistory(awid, isoCode) {
-    return await super.find({ awid, isoCode })
-      .sort({ validFrom: 1 }) // Ascending, oldest first
-      .toArray();
+  async getHistory(awid, isoCode, pageInfo = {}) {
+    const result = await super.find(
+      { awid, isoCode },
+      pageInfo,
+      { validFrom: 1 }, // Ascending
+      null
+    );
+    return result.itemList;
   }
 }
 

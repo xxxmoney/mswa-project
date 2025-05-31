@@ -11,8 +11,3 @@ const initDtoInType = shape({
     estimatedEndTime: datetime(),
   }),
 });
-
-const pageInfoDtoInType = shape({
-  pageIndex: shape().integer(0, null).isRequired(),
-  pageSize: shape().integer(1, 1000).isRequired()
-});

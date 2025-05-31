@@ -26,7 +26,8 @@ const currencyArchiveDtoInType = shape({
 
 const currencyListDtoInType = shape({
   awid: uu5String(1, 255).isRequired(),
-  pageInfo: pageInfoDtoInType
+  pageIndex: shape().integer(0, null),
+  pageSize: shape().integer(1, null)
 });
 
 const currencyGetHistoryDtoInType = shape({

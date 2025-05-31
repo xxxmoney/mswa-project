@@ -3,7 +3,7 @@
 
 const { Validator } = require("uu_appg01_server").Validation;
 const { ValidationHelper } = require("uu_appg01_server").AppServer;
-const { DaoFactory, ObjectStoreError } = require("uu_appg01_server").ObjectStore;
+const { DaoFactory } = require("uu_appg01_server").ObjectStore;
 const CountryUseCaseError = require("../api/errors/country-use-case-error.js");
 
 class CountryAbl {
@@ -169,6 +169,11 @@ class CountryAbl {
    * Profile: Readers, Authorities
    */
   async listCurrent(dtoIn) {
+    dtoIn.pageInfo ??= {};
+
+    console.log("HERE")
+    console.log(dtoIn)
+
     let validationResult = this.validator.validate("countryListDtoInType", dtoIn);
     ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CountryUseCaseError.ListCurrent.InvalidDtoIn);
 

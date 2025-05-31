@@ -3,6 +3,7 @@
 
 const { Validator } = require("uu_appg01_server").Validation;
 const { ValidationHelper } = require("uu_appg01_server").AppServer;
+const { DaoFactory } = require("uu_appg01_server").ObjectStore;
 const CurrencyUseCaseError = require("../api/errors/currency-use-case-error.js");
 
 class CurrencyAbl {

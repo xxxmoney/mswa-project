@@ -28,7 +28,8 @@ const countryArchiveDtoInType = shape({
 
 const countryListDtoInType = shape({
   awid: uu5String(1, 255).isRequired(),
-  pageInfo: pageInfoDtoInType
+  pageIndex: shape().integer(0, null),
+  pageSize: shape().integer(1, null)
 });
 
 const countryGetHistoryDtoInType = shape({
@@ -39,5 +40,6 @@ const countryGetHistoryDtoInType = shape({
 const countryListByCurrencyDtoInType = shape({
   awid: uu5String(1, 255).isRequired(),
   currencyIsoCode: uu5String(3, 3).isRequired(),
-  pageInfo: pageInfoDtoInType
+  pageIndex: shape().integer(0, null),
+  pageSize: shape().integer(1, null)
 });
