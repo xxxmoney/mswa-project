@@ -2887,8 +2887,8 @@
       "body": {},
       "parameters": [
         {"name": "awid", "value": "{{ awid }}", "id": "pair_curr_list_awid_001"},
-        {"name": "pageInfo[pageIndex]", "value": "0", "id": "pair_curr_list_pi_001"},
-        {"name": "pageInfo[pageSize]", "value": "10", "id": "pair_curr_list_ps_001"}
+        {"name": "pageIndex", "value": "0", "id": "pair_curr_list_pi_001"},
+        {"name": "pageSize", "value": "10", "id": "pair_curr_list_ps_001"}
       ],
       "headers": [],
       "authentication": {"token": "{{ token  }}", "type": "bearer"},
@@ -2996,8 +2996,8 @@
       "body": {},
       "parameters": [
         {"name": "awid", "value": "{{ awid }}", "id": "pair_cntr_list_awid_001"},
-        {"name": "pageInfo[pageIndex]", "value": "0", "id": "pair_cntr_list_pi_001"},
-        {"name": "pageInfo[pageSize]", "value": "10", "id": "pair_cntr_list_ps_001"}
+        {"name": "pageIndex", "value": "0", "id": "pair_cntr_list_pi_001"},
+        {"name": "pageSize", "value": "10", "id": "pair_cntr_list_ps_001"}
       ],
       "headers": [],
       "authentication": {"token": "{{ token  }}", "type": "bearer"},
@@ -3034,8 +3034,8 @@
       "parameters": [
         {"name": "awid", "value": "{{ awid }}", "id": "pair_cntr_listcurr_awid_001"},
         {"name": "currencyIsoCode", "value": "TC1", "id": "pair_cntr_listcurr_iso_001"},
-        {"name": "pageInfo[pageIndex]", "value": "0", "id": "pair_cntr_listcurr_pi_001"},
-        {"name": "pageInfo[pageSize]", "value": "10", "id": "pair_cntr_listcurr_ps_001"}
+        {"name": "pageIndex", "value": "0", "id": "pair_cntr_listcurr_pi_001"},
+        {"name": "pageSize", "value": "10", "id": "pair_cntr_listcurr_ps_001"}
       ],
       "headers": [],
       "authentication": {"token": "{{ token  }}", "type": "bearer"},
