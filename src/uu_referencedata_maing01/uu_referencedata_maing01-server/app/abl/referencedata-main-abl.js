@@ -34,7 +34,7 @@ class ReferencedataMainAbl {
     );
 
     // HDS 2
-    const schemas = ["referencedataMain"];
+    const schemas = ["referencedataMain", "country", "currency"];
     let schemaCreateResults = schemas.map(async (schema) => {
       try {
         return await DaoFactory.getDao(schema).createSchema();

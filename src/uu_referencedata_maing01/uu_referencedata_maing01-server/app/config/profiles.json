@@ -29,6 +29,62 @@
       "sys/uuAppWorkspace/apiConsole": {
         "sysStateList": ["created", "assigned", "active", "restricted", "readOnly", "closed", "suspended"],
         "profileList": ["Authenticated"]
+      },
+
+
+      "currency/create": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities"]
+      },
+      "currency/get": {
+        "sysStateList": ["active", "readOnly"],
+        "profileList": ["Readers", "Authorities"]
+      },
+      "currency/update": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities"]
+      },
+      "currency/archive": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities"]
+      },
+      "currency/listCurrent": {
+        "sysStateList": ["active", "readOnly"],
+        "profileList": ["Readers", "Authorities"]
+      },
+      "currency/getHistory": {
+        "sysStateList": ["active", "readOnly"],
+        "profileList": ["Readers", "Authorities"]
+      },
+
+
+      "country/create": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities"]
+      },
+      "country/get": {
+        "sysStateList": ["active", "readOnly"],
+        "profileList": ["Readers", "Authorities"]
+      },
+      "country/update": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities"]
+      },
+      "country/archive": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities"]
+      },
+      "country/listCurrent": {
+        "sysStateList": ["active", "readOnly"],
+        "profileList": ["Readers", "Authorities"]
+      },
+      "country/getHistory": {
+        "sysStateList": ["active", "readOnly"],
+        "profileList": ["Readers", "Authorities"]
+      },
+      "country/listByCurrency": {
+        "sysStateList": ["active", "readOnly"],
+        "profileList": ["Readers", "Authorities"]
       }
     }
   }
