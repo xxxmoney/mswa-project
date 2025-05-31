@@ -4,8 +4,8 @@ const currencyCreateDtoInType = shape({
   awid: shape().string(1, 255).isRequired(),
   isoCode: shape().string(3, 3).isRequired(),
   name: shape().string(1, 255).isRequired(),
-  validFrom: shape().isoDateTime(),
-  validTo: shape().isoDateTime().nullable()
+  validFrom: shape().dateTime(),
+  validTo: shape().dateTime().nullable()
 });
 
 const currencyGetDtoInType = shape({
@@ -17,7 +17,7 @@ const currencyUpdateDtoInType = shape({
   awid: shape().string(1, 255).isRequired(),
   isoCode: shape().string(3, 3).isRequired(),
   name: shape().string(1, 255).isRequired(),
-  validFrom: shape().isoDateTime()
+  validFrom: shape().dateTime()
 });
 
 const currencyArchiveDtoInType = shape({
