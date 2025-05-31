@@ -45,10 +45,17 @@ class CountryAbl {
       throw new CountryUseCaseError.Create.CountryDaoCreateFailed({ cause: e });
     }
 
+    let currencyName = "N/A";
+    if (country.currencyIsoCode) {
+      const currency = await currencyDao.getCurrent(dtoIn.awid, country.currencyIsoCode);
+      if (currency) {
+        currencyName = currency.name;
+      }
+    }
+
     return {
       ...createdCountry,
-      // If we removed currencyName from DAO, we might want to add it here for the DTO out by using linkedCurrency.name
-      // currencyName: linkedCurrency.name, // Example of enriching DtoOut
+      currencyName,
       uuAppErrorMap: {},
     };
   }
@@ -96,7 +103,6 @@ class CountryAbl {
     const countryDao = DaoFactory.getDao("country");
     const currencyDao = DaoFactory.getDao("currency");
 
-    // If currencyIsoCode is being updated, check if the new one exists
     if (dtoIn.currencyIsoCode) {
       const linkedCurrency = await currencyDao.getCurrent(dtoIn.awid, dtoIn.currencyIsoCode);
       if (!linkedCurrency) {
@@ -116,7 +122,6 @@ class CountryAbl {
       throw new CountryUseCaseError.Update.CountryNotFoundToUpdate({ awid: dtoIn.awid, isoCode: dtoIn.isoCode });
     }
 
-    // Optionally enrich with current currency name for the DtoOut
     let currencyName = "N/A";
     if (updatedCountry.currencyIsoCode) {
       const currency = await currencyDao.getCurrent(dtoIn.awid, updatedCountry.currencyIsoCode);
@@ -187,7 +192,9 @@ class CountryAbl {
       let currencyName = "N/A";
       if (country.currencyIsoCode) {
         const currency = await currencyDao.getCurrent(dtoIn.awid, country.currencyIsoCode);
-        if (currency) currencyName = currency.name;
+        if (currency) {
+          currencyName = currency.name;
+        }
       }
       return {...country, currencyName};
     }));
@@ -220,7 +227,9 @@ class CountryAbl {
         // If currencies are versioned, a more complex lookup for currency version valid at countryVersion's time might be needed.
         // For simplicity, using current name of the linked currency.
         const currency = await currencyDao.getCurrent(dtoIn.awid, countryVersion.currencyIsoCode);
-        if (currency) currencyName = currency.name;
+        if (currency) {
+          currencyName = currency.name;
+        }
       }
       return {...countryVersion, currencyName};
     }));
