@@ -2,16 +2,13 @@
 "use strict";
 
 const { Validator } = require("uu_appg01_server").Validation;
-const { DaoFactory } = require("uu_appg01_server").ObjectStore;
-const { AppModelError } = require("uu_appg01_server").Error; // Generic error
+const CurrencyMongo = require("../dao/currency-mongo.js");
 const CurrencyUseCaseError = require("../api/errors/currency-use-case-error.js");
-
-const CurrencyDao = DaoFactory.getDao("currency");
 
 class CurrencyAbl {
   constructor() {
     this.validator = Validator.load();
-    this.dao = CurrencyDao;
+    this.dao = CurrencyMongo;
   }
 
   /**

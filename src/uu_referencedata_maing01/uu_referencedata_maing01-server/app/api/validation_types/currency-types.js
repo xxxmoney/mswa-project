@@ -3,8 +3,8 @@ const currencyCreateDtoInType = shape({
   awid: shape().string(1, 255).isRequired(),
   isoCode: shape().string(3, 3).isRequired(),
   name: shape().string(1, 255).isRequired(),
-  validFrom: shape().dateTime(),
-  validTo: shape().anyOf([shape().dateTime(), null])
+  validFrom: shape().dateTime().isRequired(),
+  validTo: shape().dateTime()
 });
 
 const currencyGetDtoInType = shape({

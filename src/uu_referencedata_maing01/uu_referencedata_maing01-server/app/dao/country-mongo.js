@@ -1,6 +1,5 @@
 "use strict";
 const { UuObjectDao } = require("uu_appg01_server").ObjectStore;
-const { AppModelError } = require("uu_appg01_server").Error;
 
 class CountryMongo extends UuObjectDao {
   async createSchema() {

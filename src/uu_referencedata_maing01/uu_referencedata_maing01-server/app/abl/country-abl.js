@@ -2,18 +2,15 @@
 "use strict";
 
 const { Validator } = require("uu_appg01_server").Validation;
-const { DaoFactory } = require("uu_appg01_server").ObjectStore;
-const { AppModelError } = require("uu_appg01_server").Error;
+const CountryMongo = require("../dao/country-mongo.js");
+const CurrencyMongo = require("../dao/currency-mongo.js");
 const CountryUseCaseError  = require("../api/errors/country-use-case-error.js");
-
-const CountryDao = DaoFactory.getDao("country");
-const CurrencyDao = DaoFactory.getDao("currency");
 
 class CountryAbl {
   constructor() {
     this.validator = Validator.load();
-    this.countryDao = CountryDao;
-    this.currencyDao = CurrencyDao;
+    this.countryDao = CountryMongo;
+    this.currencyDao = CurrencyMongo;
   }
 
   /**

@@ -1,6 +1,5 @@
 "use strict";
 const { UuObjectDao } = require("uu_appg01_server").ObjectStore;
-const { AppModelError } = require("uu_appg01_server").Error; // For custom errors if needed
 
 class CurrencyMongo extends UuObjectDao {
   async createSchema() {
