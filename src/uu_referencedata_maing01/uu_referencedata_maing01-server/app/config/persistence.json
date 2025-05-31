@@ -8,7 +8,7 @@
           "realization": "dao/ReferencedataMainMongo"
         },
         "country": {
-          "realization": "dao/country-mongo"
+          "realization": "dao/CountryMongo"
         },
         "currency": {
           "realization": "dao/CurrencyMongo"
