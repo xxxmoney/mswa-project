@@ -1,11 +1,10 @@
-/* eslint-disable */
 
 const currencyCreateDtoInType = shape({
   awid: shape().string(1, 255).isRequired(),
   isoCode: shape().string(3, 3).isRequired(),
   name: shape().string(1, 255).isRequired(),
   validFrom: shape().dateTime(),
-  validTo: shape().dateTime().nullable()
+  validTo: shape().anyOf([shape().dateTime(), null])
 });
 
 const currencyGetDtoInType = shape({
@@ -27,7 +26,7 @@ const currencyArchiveDtoInType = shape({
 
 const currencyListDtoInType = shape({
   awid: shape().string(1, 255).isRequired(),
-  pageInfo: pageInfoDtoInType.isRequired().nullable()
+  pageInfo: pageInfoDtoInType
 });
 
 const currencyGetHistoryDtoInType = shape({

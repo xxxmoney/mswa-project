@@ -1,4 +1,3 @@
-/* eslint-disable */
 
 const countryCreateDtoInType = shape({
   awid: shape().string(1, 255).isRequired(),
@@ -6,7 +5,7 @@ const countryCreateDtoInType = shape({
   name: shape().string(1, 255).isRequired(),
   currencyIsoCode: shape().string(3, 3).isRequired(),
   validFrom: shape().dateTime(),
-  validTo: shape().dateTime().nullable()
+  validTo: shape().anyOf([shape().dateTime(), null])
 });
 
 const countryGetDtoInType = shape({
@@ -29,7 +28,7 @@ const countryArchiveDtoInType = shape({
 
 const countryListDtoInType = shape({
   awid: shape().string(1, 255).isRequired(),
-  pageInfo: pageInfoDtoInType.isRequired().nullable()
+  pageInfo: pageInfoDtoInType
 });
 
 const countryGetHistoryDtoInType = shape({
@@ -40,5 +39,5 @@ const countryGetHistoryDtoInType = shape({
 const countryListByCurrencyDtoInType = shape({
   awid: shape().string(1, 255).isRequired(),
   currencyIsoCode: shape().string(3, 3).isRequired(),
-  pageInfo: pageInfoDtoInType.isRequired().nullable()
+  pageInfo: pageInfoDtoInType
 });
