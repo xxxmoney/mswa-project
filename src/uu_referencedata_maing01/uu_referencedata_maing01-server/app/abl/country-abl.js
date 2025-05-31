@@ -45,17 +45,9 @@ class CountryAbl {
       throw new CountryUseCaseError.Create.CountryDaoCreateFailed({ cause: e });
     }
 
-    let currencyName = "N/A";
-    if (country.currencyIsoCode) {
-      const currency = await currencyDao.getCurrent(dtoIn.awid, country.currencyIsoCode);
-      if (currency) {
-        currencyName = currency.name;
-      }
-    }
-
     return {
       ...createdCountry,
-      currencyName,
+      currencyName: linkedCurrency.name,
       uuAppErrorMap: {},
     };
   }
@@ -77,7 +69,7 @@ class CountryAbl {
     }
 
     // Optionally, enrich with current currency name
-    let currencyName = "N/A";
+    let currencyName = "N/A"; // TODO: prolly no need to check this here - every country should have a currency
     if (country.currencyIsoCode) {
       const currency = await currencyDao.getCurrent(dtoIn.awid, country.currencyIsoCode);
       if (currency) {
@@ -103,11 +95,9 @@ class CountryAbl {
     const countryDao = DaoFactory.getDao("country");
     const currencyDao = DaoFactory.getDao("currency");
 
-    if (dtoIn.currencyIsoCode) {
-      const linkedCurrency = await currencyDao.getCurrent(dtoIn.awid, dtoIn.currencyIsoCode);
-      if (!linkedCurrency) {
-        throw new CountryUseCaseError.Update.LinkedCurrencyNotFound({ awid: dtoIn.awid, currencyIsoCode: dtoIn.currencyIsoCode });
-      }
+    const linkedCurrency = await currencyDao.getCurrent(dtoIn.awid, dtoIn.currencyIsoCode);
+    if (!linkedCurrency) {
+      throw new CountryUseCaseError.Update.LinkedCurrencyNotFound({ awid: dtoIn.awid, currencyIsoCode: dtoIn.currencyIsoCode });
     }
 
     let updatedCountry;
@@ -122,17 +112,9 @@ class CountryAbl {
       throw new CountryUseCaseError.Update.CountryNotFoundToUpdate({ awid: dtoIn.awid, isoCode: dtoIn.isoCode });
     }
 
-    let currencyName = "N/A";
-    if (updatedCountry.currencyIsoCode) {
-      const currency = await currencyDao.getCurrent(dtoIn.awid, updatedCountry.currencyIsoCode);
-      if (currency) {
-        currencyName = currency.name;
-      }
-    }
-
     return {
       ...updatedCountry,
-      currencyName,
+      currencyName: linkedCurrency.name,
       uuAppErrorMap: {},
     };
   }
@@ -154,7 +136,7 @@ class CountryAbl {
     }
 
     // Optionally enrich with currency name
-    let currencyName = "N/A";
+    let currencyName = "N/A"; // TODO: prolly no need to check this here - every country should have a currency
     if (archivedCountry.currencyIsoCode) {
       const currency = await currencyDao.getCurrent(dtoIn.awid, archivedCountry.currencyIsoCode);
       if (currency) {
@@ -189,7 +171,7 @@ class CountryAbl {
 
     // Enrich items with currency names
     const itemList = await Promise.all(countryListRaw.map(async (country) => {
-      let currencyName = "N/A";
+      let currencyName = "N/A"; // TODO: prolly no need to check this here - every country should have a currency
       if (country.currencyIsoCode) {
         const currency = await currencyDao.getCurrent(dtoIn.awid, country.currencyIsoCode);
         if (currency) {
@@ -221,11 +203,8 @@ class CountryAbl {
 
     // Enrich items with currency names
     const itemList = await Promise.all(historyRaw.map(async (countryVersion) => {
-      let currencyName = "N/A";
+      let currencyName = "N/A"; // TODO: prolly no need to check this here - every country should have a currency
       if (countryVersion.currencyIsoCode) {
-        // For history, we might want the currency as it was, but our currency DAO gives current.
-        // If currencies are versioned, a more complex lookup for currency version valid at countryVersion's time might be needed.
-        // For simplicity, using current name of the linked currency.
         const currency = await currencyDao.getCurrent(dtoIn.awid, countryVersion.currencyIsoCode);
         if (currency) {
           currencyName = currency.name;
