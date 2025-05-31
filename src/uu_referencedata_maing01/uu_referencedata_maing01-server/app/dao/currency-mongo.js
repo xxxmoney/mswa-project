@@ -88,7 +88,7 @@ class CurrencyMongo extends UuObjectDao {
 
   async getHistory(awid, isoCode, pageInfo = {}) {
     const result = await super.find(
-      { awid, isoCode },
+      { awid, isoCode, validTo: { $ne: null } },
       pageInfo,
       { validFrom: 1 }, // Ascending
       null
