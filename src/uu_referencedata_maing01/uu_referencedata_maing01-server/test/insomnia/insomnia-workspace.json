@@ -2865,7 +2865,7 @@
       "created": 1670000004000,
       "url": "{{ host  }}/{{ contextPath  }}/{{ awid }}/currency/archive",
       "name": "currency/archive",
-      "method": "POST",
+      "method": "DELETE",
       "body": {
         "mimeType": "application/json",
         "text": "{\n\t\"awid\": \"{{ awid }}\",\n\t\"isoCode\": \"TC1\"\n}"
@@ -2974,7 +2974,7 @@
       "created": 1670000014000,
       "url": "{{ host  }}/{{ contextPath  }}/{{ awid }}/country/archive",
       "name": "country/archive",
-      "method": "POST",
+      "method": "DELETE",
       "body": {
         "mimeType": "application/json",
         "text": "{\n\t\"awid\": \"{{ awid }}\",\n\t\"isoCode\": \"TC\"\n}"

@@ -4,8 +4,6 @@ const countryCreateDtoInType = shape({
   isoCode: uu5String(2, 3).isRequired(),
   name: uu5String(1, 255).isRequired(),
   currencyIsoCode: uu5String(3, 3).isRequired(),
-  validFrom: shape().dateTime().isRequired(),
-  validTo: shape().dateTime()
 });
 
 const countryGetDtoInType = shape({
@@ -18,7 +16,6 @@ const countryUpdateDtoInType = shape({
   isoCode: uu5String(2, 3).isRequired(),
   name: uu5String(1, 255),
   currencyIsoCode: uu5String(3, 3),
-  validFrom: shape().dateTime()
 });
 
 const countryArchiveDtoInType = shape({
