@@ -82,4 +82,4 @@ class CurrencyMongo extends UuObjectDao {
   }
 }
 
-module.exports = new CurrencyMongo();
+module.exports = CurrencyMongo;

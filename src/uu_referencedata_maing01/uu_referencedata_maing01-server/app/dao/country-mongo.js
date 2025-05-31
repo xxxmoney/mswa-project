@@ -91,4 +91,4 @@ class CountryMongo extends UuObjectDao {
   }
 }
 
-module.exports = new CountryMongo();
+module.exports = CountryMongo;
