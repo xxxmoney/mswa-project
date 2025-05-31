@@ -30,7 +30,7 @@ const countryListDtoInType = shape({
 });
 
 const countryGetHistoryDtoInType = shape({
-  awid: uu5String(255).isRequired(),
+  awid: uu5String(1, 255).isRequired(),
   isoCode: uu5String(2, 3).isRequired()
 });
 
