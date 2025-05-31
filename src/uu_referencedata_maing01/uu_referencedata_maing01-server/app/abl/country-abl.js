@@ -5,7 +5,8 @@ const { Validator } = require("uu_appg01_server").Validation;
 const { ValidationHelper } = require("uu_appg01_server").AppServer;
 const CountryMongo = require("../dao/country-mongo.js");
 const CurrencyMongo = require("../dao/currency-mongo.js");
-const CountryUseCaseError  = require("../api/errors/country-use-case-error.js");
+const CountryUseCaseError = require("../api/errors/country-use-case-error.js");
+const CurrencyUseCaseError = require("../api/errors/currency-use-case-error");
 
 class CountryAbl {
   constructor() {
@@ -22,20 +23,18 @@ class CountryAbl {
   async create(dtoIn) {
     // DTO validation against countryCreateDtoInType
     let validationResult = this.validator.validate("countryCreateDtoInType", dtoIn);
-    if (!validationResult.isValid()) {
-      throw new CountryUseCaseError .Create.InvalidDtoIn(ValidationHelper.processValidationResult(dtoIn, validationResult));
-    }
+    ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CountryUseCaseError.Create.InvalidDtoIn);
 
     // Business rule: Check if country with this isoCode already exists (as an active one)
     const existingCountry = await this.countryDao.getCurrent(dtoIn.awid, dtoIn.isoCode);
     if (existingCountry) {
-      throw new CountryUseCaseError .Create.CountryAlreadyExists({ awid: dtoIn.awid, isoCode: dtoIn.isoCode });
+      throw new CountryUseCaseError.Create.CountryAlreadyExists({ awid: dtoIn.awid, isoCode: dtoIn.isoCode });
     }
 
     // Business rule: Check if the linked currencyIsoCode exists and is active
     const linkedCurrency = await this.currencyDao.getCurrent(dtoIn.awid, dtoIn.currencyIsoCode);
     if (!linkedCurrency) {
-      throw new CountryUseCaseError .Create.LinkedCurrencyNotFound({ awid: dtoIn.awid, currencyIsoCode: dtoIn.currencyIsoCode });
+      throw new CountryUseCaseError.Create.LinkedCurrencyNotFound({ awid: dtoIn.awid, currencyIsoCode: dtoIn.currencyIsoCode });
     }
 
     const countryToCreate = { ...dtoIn };
@@ -45,7 +44,7 @@ class CountryAbl {
     try {
       createdCountry = await this.countryDao.create(dtoIn.awid, countryToCreate);
     } catch (e) {
-      throw new CountryUseCaseError .Create.CountryDaoCreateFailed({ cause: e });
+      throw new CountryUseCaseError.Create.CountryDaoCreateFailed({ cause: e });
     }
 
     return {
@@ -62,13 +61,11 @@ class CountryAbl {
    */
   async get(dtoIn) {
     let validationResult = this.validator.validate("countryGetDtoInType", dtoIn);
-    if (!validationResult.isValid()) {
-      throw new CountryUseCaseError .Get.InvalidDtoIn(ValidationHelper.processValidationResult(dtoIn, validationResult));
-    }
+    ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CountryUseCaseError.Get.InvalidDtoIn);
 
     const country = await this.countryDao.getCurrent(dtoIn.awid, dtoIn.isoCode);
     if (!country) {
-      throw new CountryUseCaseError .Get.CountryNotFound({ awid: dtoIn.awid, isoCode: dtoIn.isoCode });
+      throw new CountryUseCaseError.Get.CountryNotFound({ awid: dtoIn.awid, isoCode: dtoIn.isoCode });
     }
 
     // Optionally, enrich with current currency name
@@ -93,15 +90,13 @@ class CountryAbl {
    */
   async update(dtoIn) {
     let validationResult = this.validator.validate("countryUpdateDtoInType", dtoIn);
-    if (!validationResult.isValid()) {
-      throw new CountryUseCaseError .Update.InvalidDtoIn(ValidationHelper.processValidationResult(dtoIn, validationResult));
-    }
+    ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CountryUseCaseError.Update.InvalidDtoIn());
 
     // If currencyIsoCode is being updated, check if the new one exists
     if (dtoIn.currencyIsoCode) {
       const linkedCurrency = await this.currencyDao.getCurrent(dtoIn.awid, dtoIn.currencyIsoCode);
       if (!linkedCurrency) {
-        throw new CountryUseCaseError .Update.LinkedCurrencyNotFound({ awid: dtoIn.awid, currencyIsoCode: dtoIn.currencyIsoCode });
+        throw new CountryUseCaseError.Update.LinkedCurrencyNotFound({ awid: dtoIn.awid, currencyIsoCode: dtoIn.currencyIsoCode });
       }
     }
 
@@ -111,10 +106,10 @@ class CountryAbl {
       delete updateData.awid;
       updatedCountry = await this.countryDao.update(dtoIn.awid, isoCode, updateData);
     } catch (e) {
-      throw new CountryUseCaseError .Update.CountryDaoUpdateFailed({ cause: e });
+      throw new CountryUseCaseError.Update.CountryDaoUpdateFailed({ cause: e });
     }
     if (!updatedCountry) {
-      throw new CountryUseCaseError .Update.CountryNotFoundToUpdate({ awid: dtoIn.awid, isoCode: dtoIn.isoCode });
+      throw new CountryUseCaseError.Update.CountryNotFoundToUpdate({ awid: dtoIn.awid, isoCode: dtoIn.isoCode });
     }
 
     // Optionally enrich with current currency name for the DtoOut
@@ -139,13 +134,11 @@ class CountryAbl {
    */
   async archive(dtoIn) {
     let validationResult = this.validator.validate("countryArchiveDtoInType", dtoIn);
-    if (!validationResult.isValid()) {
-      throw new CountryUseCaseError .Archive.InvalidDtoIn(ValidationHelper.processValidationResult(dtoIn, validationResult));
-    }
+    ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CountryUseCaseError.Archive.InvalidDtoIn);
 
     const archivedCountry = await this.countryDao.archive(dtoIn.awid, dtoIn.isoCode);
     if (!archivedCountry) {
-      throw new CountryUseCaseError .Archive.CountryNotFoundToArchive({ awid: dtoIn.awid, isoCode: dtoIn.isoCode });
+      throw new CountryUseCaseError.Archive.CountryNotFoundToArchive({ awid: dtoIn.awid, isoCode: dtoIn.isoCode });
     }
 
     // Optionally enrich with currency name
@@ -170,9 +163,7 @@ class CountryAbl {
    */
   async listCurrent(dtoIn) {
     let validationResult = this.validator.validate("countryListDtoInType", dtoIn);
-    if (!validationResult.isValid()) {
-      throw new CountryUseCaseError .ListCurrent.InvalidDtoIn(ValidationHelper.processValidationResult(dtoIn, validationResult));
-    }
+    ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CountryUseCaseError.ListCurrent.InvalidDtoIn);
 
     const countryListRaw = await this.countryDao.listCurrent(dtoIn.awid, dtoIn.pageInfo);
 
@@ -199,9 +190,7 @@ class CountryAbl {
    */
   async getHistory(dtoIn) {
     let validationResult = this.validator.validate("countryGetHistoryDtoInType", dtoIn);
-    if (!validationResult.isValid()) {
-      throw new CountryUseCaseError .GetHistory.InvalidDtoIn(ValidationHelper.processValidationResult(dtoIn, validationResult));
-    }
+    ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CountryUseCaseError.GetHistory.InvalidDtoIn);
 
     const historyRaw = await this.countryDao.getHistory(dtoIn.awid, dtoIn.isoCode);
 
@@ -230,14 +219,13 @@ class CountryAbl {
    */
   async listByCurrency(dtoIn) {
     let validationResult = this.validator.validate("countryListByCurrencyDtoInType", dtoIn);
-    if (!validationResult.isValid()) {
-      throw new CountryUseCaseError .ListByCurrency.InvalidDtoIn(ValidationHelper.processValidationResult(dtoIn, validationResult));
-    }
+    ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CountryUseCaseError.ListByCurrency.InvalidDtoIn);
+
 
     // Check if the currency itself exists and is active
     const currency = await this.currencyDao.getCurrent(dtoIn.awid, dtoIn.currencyIsoCode);
     if (!currency) {
-      throw new CountryUseCaseError .ListByCurrency.CurrencyNotFound({ awid: dtoIn.awid, currencyIsoCode: dtoIn.currencyIsoCode });
+      throw new CountryUseCaseError.ListByCurrency.CurrencyNotFound({ awid: dtoIn.awid, currencyIsoCode: dtoIn.currencyIsoCode });
     }
 
     const countryListRaw = await this.countryDao.listByCurrency(dtoIn.awid, dtoIn.currencyIsoCode, dtoIn.pageInfo);

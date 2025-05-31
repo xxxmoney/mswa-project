@@ -19,9 +19,7 @@ class CurrencyAbl {
    */
   async create(dtoIn) {
     let validationResult = this.validator.validate("currencyCreateDtoInType", dtoIn);
-    if (!validationResult.isValid()) {
-      throw new CurrencyUseCaseError.Create.InvalidDtoIn(ValidationHelper.processValidationResult(dtoIn, validationResult));
-    }
+    ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CurrencyUseCaseError.Create.InvalidDtoIn);
 
     const existingCurrency = await this.dao.getCurrent(dtoIn.awid, dtoIn.isoCode);
     if (existingCurrency) {
@@ -50,9 +48,7 @@ class CurrencyAbl {
    */
   async get(dtoIn) {
     let validationResult = this.validator.validate("currencyGetDtoInType", dtoIn);
-    if (!validationResult.isValid()) {
-      throw new CurrencyUseCaseError.Get.InvalidDtoIn(ValidationHelper.processValidationResult(dtoIn, validationResult));
-    }
+    ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CurrencyUseCaseError.Get.InvalidDtoIn);
 
     const currency = await this.dao.getCurrent(dtoIn.awid, dtoIn.isoCode);
     if (!currency) {
@@ -71,9 +67,7 @@ class CurrencyAbl {
    */
   async update(dtoIn) {
     let validationResult = this.validator.validate("currencyUpdateDtoInType", dtoIn);
-    if (!validationResult.isValid()) {
-      throw new CurrencyUseCaseError.Update.InvalidDtoIn(ValidationHelper.processValidationResult(dtoIn, validationResult));
-    }
+    ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CurrencyUseCaseError.Update.InvalidDtoIn)
 
     let updatedCurrency;
     try {
@@ -104,9 +98,7 @@ class CurrencyAbl {
    */
   async archive(dtoIn) {
     let validationResult = this.validator.validate("currencyArchiveDtoInType", dtoIn);
-    if (!validationResult.isValid()) {
-      throw new CurrencyUseCaseError.Archive.InvalidDtoIn(ValidationHelper.processValidationResult(dtoIn, validationResult));
-    }
+    ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CurrencyUseCaseError.Archive.InvalidDtoIn);
 
     const archivedCurrency = await this.dao.archive(dtoIn.awid, dtoIn.isoCode);
     if (!archivedCurrency) {
@@ -125,9 +117,7 @@ class CurrencyAbl {
    */
   async listCurrent(dtoIn) {
     let validationResult = this.validator.validate("currencyListDtoInType", dtoIn);
-    if (!validationResult.isValid()) {
-      throw new CurrencyUseCaseError.ListCurrent.InvalidDtoIn(ValidationHelper.processValidationResult(dtoIn, validationResult));
-    }
+    ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CurrencyUseCaseError.ListCurrent.InvalidDtoIn);
 
     const currencyList = await this.dao.listCurrent(dtoIn.awid, dtoIn.pageInfo);
 
@@ -144,9 +134,7 @@ class CurrencyAbl {
    */
   async getHistory(dtoIn) {
     let validationResult = this.validator.validate("currencyGetHistoryDtoInType", dtoIn);
-    if (!validationResult.isValid()) {
-      throw new CurrencyUseCaseError.GetHistory.InvalidDtoIn(ValidationHelper.processValidationResult(dtoIn, validationResult));
-    }
+    ValidationHelper.processValidationResult(dtoIn, validationResult, "invalidDtoIn", CurrencyUseCaseError.GetHistory.InvalidDtoIn);
 
     const history = await this.dao.getHistory(dtoIn.awid, dtoIn.isoCode);
     return {
