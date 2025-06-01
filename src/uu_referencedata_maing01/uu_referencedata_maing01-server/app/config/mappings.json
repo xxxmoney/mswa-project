@@ -30,6 +30,75 @@
         "realization": "api-console.html",
         "httpMethod": "GET",
         "type": "UVE"
+      },
+
+
+      "currency/create": {
+        "realization": "api/controllers/CurrencyController.create",
+        "httpMethod": "POST",
+        "type": "CMD"
+      },
+      "currency/get": {
+        "realization": "api/controllers/CurrencyController.get",
+        "httpMethod": "GET",
+        "type": "CMD"
+      },
+      "currency/update": {
+        "realization": "api/controllers/CurrencyController.update",
+        "httpMethod": "PUT",
+        "type": "CMD"
+      },
+      "currency/archive": {
+        "realization": "api/controllers/CurrencyController.archive",
+        "httpMethod": "DELETE",
+        "type": "CMD"
+      },
+      "currency/listCurrent": {
+        "realization": "api/controllers/CurrencyController.listCurrent",
+        "httpMethod": "GET",
+        "type": "CMD"
+      },
+      "currency/getHistory": {
+        "realization": "api/controllers/CurrencyController.getHistory",
+        "httpMethod": "GET",
+        "type": "CMD"
+      },
+
+
+      "country/create": {
+        "realization": "api/controllers/CountryController.create",
+        "httpMethod": "POST",
+        "type": "CMD"
+      },
+      "country/get": {
+        "realization": "api/controllers/CountryController.get",
+        "httpMethod": "GET",
+        "type": "CMD"
+      },
+      "country/update": {
+        "realization": "api/controllers/CountryController.update",
+        "httpMethod": "PUT",
+        "type": "CMD"
+      },
+      "country/archive": {
+        "realization": "api/controllers/CountryController.archive",
+        "httpMethod": "DELETE",
+        "type": "CMD"
+      },
+      "country/listCurrent": {
+        "realization": "api/controllers/CountryController.listCurrent",
+        "httpMethod": "GET",
+        "type": "CMD"
+      },
+      "country/getHistory": {
+        "realization": "api/controllers/CountryController.getHistory",
+        "httpMethod": "GET",
+        "type": "CMD"
+      },
+      "country/listByCurrency": {
+        "realization": "api/controllers/CountryController.listByCurrency",
+        "httpMethod": "GET",
+        "type": "CMD"
       }
     }
   }
