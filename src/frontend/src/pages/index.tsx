@@ -1,21 +1,28 @@
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+function HomeContent() {
+  const { session, logout } = useAuth();
 
-export default function Home() {
   return (
     <div
-      className={`${geistSans.className} ${geistMono.className} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
+      className={`grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
     >
+      <header className="absolute top-4 right-4 flex items-center gap-4">
+        <div className="text-white text-sm">
+          Welcome, {session?.user?.name || session?.user?.email}!
+        </div>
+        <Button
+          onClick={logout}
+          className="bg-red-600 hover:bg-red-700 text-white"
+        >
+          Logout
+        </Button>
+      </header>
+
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         <Image
           className="dark:invert"
@@ -111,5 +118,13 @@ export default function Home() {
         </a>
       </footer>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <ProtectedRoute>
+      <HomeContent />
+    </ProtectedRoute>
   );
 }
