@@ -15,36 +15,28 @@ export default NextAuth({
         }
 
         try {
-          // Replace with your backend API endpoint
-        //   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-        //     method: 'POST',
-        //     headers: {
-        //       'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify({
-        //       email: credentials.email,
-        //       password: credentials.password,
-        //     }),
-        //   })
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: credentials.email,
+              password: credentials.password,
+            }),
+          })
 
-        //   if (!response.ok) {
-        //     return null
-        //   }
-
-        //   const user = await response.json()
-
-        //   if (!user) {
-        //     return null
-        //   }
-
-        if (credentials.email !== "test@test.com" && credentials.password !== "test") return null
-
-          return {
-            id: "1",
-            email: "test@test.com",
-            name: "Test User",
-            // Add any other user data you want to include in the session
+          if (!response.ok) {
+            return null
           }
+
+          const user = await response.json()
+
+          if (!user) {
+            return null
+          }
+
+          return user.data
         } catch (error) {
           console.error('Auth error:', error)
           return null
@@ -72,5 +64,4 @@ export default NextAuth({
       return session
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
 }) 
