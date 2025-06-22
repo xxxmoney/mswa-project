@@ -1,4 +1,5 @@
 const Currency = require('../models/Currency');
+const Country = require('../models/Country');
 const currencyValidation = require('../validation/currencyValidation');
 const { v4: uuidv4 } = require('uuid');
 
@@ -6,9 +7,8 @@ const currencyController = {
   // Create a new currency
   async create(req, res, next) {
     try {
-      const id = uuidv4();
       
-      const requestBody = { ...req.body, id };
+      const requestBody = { ...req.body };
       
       const { error } = currencyValidation.create.validate(requestBody);
       if (error) {
@@ -21,7 +21,7 @@ const currencyController = {
       const { isoCode, name, validFrom, validTo } = req.body;
 
       // Check if currency with this isoCode already exists (as an active one)
-      const existingCurrency = await Currency.getCurrent(id, isoCode);
+      const existingCurrency = await Currency.getByIsoCode(isoCode);
       if (existingCurrency) {
         return res.status(409).json({
           success: false,
@@ -31,14 +31,13 @@ const currencyController = {
 
       // Create the currency
       const currencyData = {
-        id,
         isoCode,
         name,
         validFrom: validFrom ? new Date(validFrom) : new Date(),
         validTo: validTo ? new Date(validTo) : null
       };
 
-      const createdCurrency = await Currency.create(currencyData);
+      const createdCurrency = await Currency.createCurrency(currencyData);
 
       res.status(201).json({
         success: true,
@@ -60,9 +59,9 @@ const currencyController = {
         });
       }
 
-      const { id, isoCode } = req.params;
+      const { isoCode } = req.params;
 
-      const currency = await Currency.getCurrent(id, isoCode);
+      const currency = await Currency.getByIsoCode(isoCode);
       if (!currency) {
         return res.status(404).json({
           success: false,
@@ -90,10 +89,10 @@ const currencyController = {
         });
       }
 
-      const { id, isoCode } = req.params;
+      const { isoCode } = req.params;
       const updateData = req.body;
 
-      const updatedCurrency = await Currency.updateCurrency(id, isoCode, updateData);
+      const updatedCurrency = await Currency.updateCurrency(isoCode, updateData);
       if (!updatedCurrency) {
         return res.status(404).json({
           success: false,
@@ -121,9 +120,9 @@ const currencyController = {
         });
       }
 
-      const { id, isoCode } = req.params;
+      const { isoCode } = req.params;
 
-      const archivedCurrency = await Currency.archiveCurrency(id, isoCode);
+      const archivedCurrency = await Currency.archiveCurrency(isoCode);
       if (!archivedCurrency) {
         return res.status(404).json({
           success: false,
@@ -151,13 +150,12 @@ const currencyController = {
         });
       }
 
-      const { id } = req.params;
       const pageInfo = {
         pageIndex: parseInt(req.query.pageIndex) || 0,
         pageSize: parseInt(req.query.pageSize) || 50
       };
 
-      const currencyList = await Currency.listCurrent(id, pageInfo);
+      const currencyList = await Currency.listCurrent(pageInfo);
 
       res.json({
         success: true,
@@ -182,17 +180,19 @@ const currencyController = {
         });
       }
 
-      const { id, isoCode } = req.params;
+      const { isoCode } = req.params;
       const pageInfo = {
         pageIndex: parseInt(req.query.pageIndex) || 0,
         pageSize: parseInt(req.query.pageSize) || 50
       };
 
-      const history = await Currency.getHistory(id, isoCode, pageInfo);
+      const country = await Country.getByCurrencyIsoCode(isoCode);
+      const history = await Currency.getHistory(isoCode, pageInfo);
 
       res.json({
         success: true,
         data: {
+          country,
           itemList: history
         }
       });

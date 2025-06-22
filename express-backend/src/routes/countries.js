@@ -11,11 +11,11 @@ router.param('id', (req, res, next, id) => {
 
 // Country routes
 router.post('/', countryController.create);
-router.get('/:id/:isoCode', countryController.get);
-router.put('/:id/:isoCode', countryController.update);
-router.delete('/:id/:isoCode', countryController.archive);
-router.get('/:id', countryController.listCurrent);
-router.get('/:id/:isoCode/history', countryController.getHistory);
-router.get('/:id/currency/:currencyIsoCode', countryController.listByCurrency);
+router.get('/:isoCode', countryController.get);
+router.put('/:isoCode', countryController.update);
+router.delete('/:isoCode', countryController.archive);
+router.get('/', countryController.listCurrent);
+router.get('/:isoCode/history', countryController.getHistory);
+router.get('/currency/:currencyIsoCode', countryController.listByCurrency);
 
 module.exports = router; 

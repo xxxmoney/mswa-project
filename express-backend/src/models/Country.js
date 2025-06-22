@@ -42,10 +42,10 @@ const countrySchema = new mongoose.Schema({
 });
 
 // Compound indexes for efficient querying
-countrySchema.index({ id: 1, isoCode: 1, validTo: 1 });
-countrySchema.index({ id: 1, isoCode: 1, validFrom: 1 });
-countrySchema.index({ id: 1, validTo: 1 });
-countrySchema.index({ id: 1, currencyIsoCode: 1, validTo: 1 });
+countrySchema.index({ isoCode: 1, validTo: 1 });
+countrySchema.index({ isoCode: 1, validFrom: 1 });
+countrySchema.index({ validTo: 1 });
+countrySchema.index({ currencyIsoCode: 1, validTo: 1 });
 
 // Virtual for checking if record is current (not archived)
 countrySchema.virtual('isCurrent').get(function() {
@@ -53,50 +53,54 @@ countrySchema.virtual('isCurrent').get(function() {
 });
 
 // Static method to get current version of a country
-countrySchema.statics.getCurrent = function(id, isoCode) {
-  return this.findOne({ id, isoCode, validTo: null });
+countrySchema.statics.getCurrent = function(isoCode) {
+  return this.findOne({ isoCode, validTo: null });
 };
 
 // Static method to list current countries
-countrySchema.statics.listCurrent = function(id, pageInfo = {}) {
+countrySchema.statics.listCurrent = function(pageInfo = {}) {
   const { pageIndex = 0, pageSize = 50 } = pageInfo;
   const skip = pageIndex * pageSize;
   
-  return this.find({ id, validTo: null })
+  return this.find({ validTo: null })
     .sort({ name: 1 })
     .skip(skip)
     .limit(pageSize);
 };
 
 // Static method to get history of a country
-countrySchema.statics.getHistory = function(id, isoCode, pageInfo = {}) {
+countrySchema.statics.getHistory = function(isoCode, pageInfo = {}) {
   const { pageIndex = 0, pageSize = 50 } = pageInfo;
   const skip = pageIndex * pageSize;
   
-  return this.find({ id, isoCode, validTo: { $ne: null } })
+  return this.find({ isoCode, validTo: { $ne: null } })
     .sort({ validFrom: 1 })
     .skip(skip)
     .limit(pageSize);
 };
 
 // Static method to list countries by currency
-countrySchema.statics.listByCurrency = function(id, currencyIsoCode, pageInfo = {}) {
+countrySchema.statics.listByCurrency = function(currencyIsoCode, pageInfo = {}) {
   const { pageIndex = 0, pageSize = 50 } = pageInfo;
   const skip = pageIndex * pageSize;
   
-  return this.find({ id, currencyIsoCode, validTo: null })
+  return this.find({ currencyIsoCode, validTo: null })
     .sort({ name: 1 })
     .skip(skip)
     .limit(pageSize);
 };
 
+countrySchema.statics.getByCurrencyIsoCode = function(currencyIsoCode) {
+  return this.findOne({ currencyIsoCode, validTo: null });
+};
+
 // Static method to update a country (creates new version)
-countrySchema.statics.updateCountry = async function(id, isoCode, updateData) {
+countrySchema.statics.updateCountry = async function(isoCode, updateData) {
   const now = new Date();
   const newVersionValidFrom = updateData.validFrom ? new Date(updateData.validFrom) : now;
 
   // Get current version
-  const currentCountry = await this.findOne({ id, isoCode, validTo: null });
+  const currentCountry = await this.findOne({ isoCode, validTo: null });
   if (!currentCountry) {
     return null;
   }
@@ -112,7 +116,6 @@ countrySchema.statics.updateCountry = async function(id, isoCode, updateData) {
 
   // Create new version
   const newCountryData = {
-    id,
     isoCode,
     name: updateData.name !== undefined ? updateData.name : currentCountry.name,
     currencyIsoCode: updateData.currencyIsoCode !== undefined ? updateData.currencyIsoCode : currentCountry.currencyIsoCode,
@@ -124,9 +127,9 @@ countrySchema.statics.updateCountry = async function(id, isoCode, updateData) {
 };
 
 // Static method to archive a country
-countrySchema.statics.archiveCountry = async function(id, isoCode) {
+countrySchema.statics.archiveCountry = async function(isoCode) {
   const updatedDocument = await this.findOneAndUpdate(
-    { id, isoCode, validTo: null },
+    { isoCode, validTo: null },
     { validTo: new Date() },
     { new: true }
   );
@@ -134,7 +137,7 @@ countrySchema.statics.archiveCountry = async function(id, isoCode) {
   if (!updatedDocument) {
     // If no current version found, return the most recent archived version
     const findResult = await this.find(
-      { id, isoCode, validTo: { $ne: null } },
+      { isoCode, validTo: { $ne: null } },
       null,
       { sort: { validTo: -1 }, limit: 1 }
     );

@@ -28,6 +28,10 @@ const currencySchema = new mongoose.Schema({
   validTo: {
     type: Date,
     default: null
+  },
+  version: {
+    type: Number,
+    default: 1
   }
 }, {
   timestamps: true,
@@ -36,9 +40,9 @@ const currencySchema = new mongoose.Schema({
 });
 
 // Compound indexes for efficient querying
-currencySchema.index({ id: 1, isoCode: 1, validTo: 1 });
-currencySchema.index({ id: 1, isoCode: 1, validFrom: 1 });
-currencySchema.index({ id: 1, validTo: 1 });
+currencySchema.index({ isoCode: 1, validTo: 1 });
+currencySchema.index({ isoCode: 1, validFrom: 1 });
+currencySchema.index({ validTo: 1 });
 
 // Virtual for checking if record is current (not archived)
 currencySchema.virtual('isCurrent').get(function() {
@@ -46,39 +50,43 @@ currencySchema.virtual('isCurrent').get(function() {
 });
 
 // Static method to get current version of a currency
-currencySchema.statics.getCurrent = function(id, isoCode) {
-  return this.findOne({ id, isoCode, validTo: null });
+currencySchema.statics.getCurrent = function(isoCode) {
+  return this.findOne({ isoCode, validTo: null });
+};
+
+currencySchema.statics.getByIsoCode = async function(isoCode) {
+  return this.findOne({ isoCode, validTo: null });
 };
 
 // Static method to list current currencies
-currencySchema.statics.listCurrent = function(id, pageInfo = {}) {
+currencySchema.statics.listCurrent = function(pageInfo = {}) {
   const { pageIndex = 0, pageSize = 50 } = pageInfo;
   const skip = pageIndex * pageSize;
   
-  return this.find({ id, validTo: null })
+  return this.find({ validTo: null })
     .sort({ name: 1 })
     .skip(skip)
     .limit(pageSize);
 };
 
 // Static method to get history of a currency
-currencySchema.statics.getHistory = function(id, isoCode, pageInfo = {}) {
+currencySchema.statics.getHistory = function(isoCode, pageInfo = {}) {
   const { pageIndex = 0, pageSize = 50 } = pageInfo;
   const skip = pageIndex * pageSize;
   
-  return this.find({ id, isoCode, validTo: { $ne: null } })
-    .sort({ validFrom: 1 })
+  return this.find({ isoCode })
+    .sort({ validFrom: -1 })
     .skip(skip)
     .limit(pageSize);
 };
 
 // Static method to update a currency (creates new version)
-currencySchema.statics.updateCurrency = async function(id, isoCode, updateData) {
+currencySchema.statics.updateCurrency = async function(isoCode, updateData) {
   const now = new Date();
   const newVersionValidFrom = updateData.validFrom ? new Date(updateData.validFrom) : now;
 
   // Get current version
-  const currentCurrency = await this.findOne({ id, isoCode, validTo: null });
+  const currentCurrency = await this.findOne({ isoCode, validTo: null });
   if (!currentCurrency) {
     return null;
   }
@@ -94,7 +102,6 @@ currencySchema.statics.updateCurrency = async function(id, isoCode, updateData) 
 
   // Create new version
   const newCurrencyData = {
-    id,
     isoCode,
     name: updateData.name || currentCurrency.name,
     validFrom: newVersionValidFrom,
@@ -105,9 +112,9 @@ currencySchema.statics.updateCurrency = async function(id, isoCode, updateData) 
 };
 
 // Static method to archive a currency
-currencySchema.statics.archiveCurrency = async function(id, isoCode) {
+currencySchema.statics.archiveCurrency = async function(isoCode) {
   const updatedDocument = await this.findOneAndUpdate(
-    { id, isoCode, validTo: null },
+    { isoCode, validTo: null },
     { validTo: new Date() },
     { new: true }
   );
@@ -115,7 +122,7 @@ currencySchema.statics.archiveCurrency = async function(id, isoCode) {
   if (!updatedDocument) {
     // If no current version found, return the most recent archived version
     const findResult = await this.find(
-      { id, isoCode, validTo: { $ne: null } },
+      { isoCode, validTo: { $ne: null } },
       null,
       { sort: { validTo: -1 }, limit: 1 }
     );
@@ -123,6 +130,16 @@ currencySchema.statics.archiveCurrency = async function(id, isoCode) {
   }
 
   return updatedDocument;
+};
+
+currencySchema.statics.createCurrency = async function(data) {
+  const existingCurrency = await this.findOne({ isoCode: data.isoCode }, null, { sort: { validTo: -1 }, limit: 1 });
+
+  if (existingCurrency) {
+    data.version = (existingCurrency.version || 0) + 1;
+  }
+
+  return await this.create(data);
 };
 
 module.exports = mongoose.model('Currency', currencySchema); 
