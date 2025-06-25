@@ -18,7 +18,7 @@ const currencyController = {
         });
       }
 
-      const { isoCode, name, validFrom, validTo } = req.body;
+      const { isoCode, name, symbol, validFrom, validTo } = req.body;
 
       // Check if currency with this isoCode already exists (as an active one)
       const existingCurrency = await Currency.getByIsoCode(isoCode);
@@ -33,6 +33,7 @@ const currencyController = {
       const currencyData = {
         isoCode,
         name,
+        symbol,
         validFrom: validFrom ? new Date(validFrom) : new Date(),
         validTo: validTo ? new Date(validTo) : null
       };

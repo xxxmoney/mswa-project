@@ -5,8 +5,9 @@ const currencyValidation = {
   create: Joi.object({
     isoCode: Joi.string().length(3).uppercase().required(),
     name: Joi.string().min(1).max(100).required(),
+    symbol: Joi.string().min(1).max(10).optional(),
     validFrom: Joi.date().optional(),
-    validTo: Joi.date().optional()
+    validTo: Joi.date().optional()  
   }),
 
   // Get currency validation
@@ -23,7 +24,6 @@ const currencyValidation = {
 
   // Archive currency validation
   archive: Joi.object({
-    id: Joi.string().uuid().required(),
     isoCode: Joi.string().length(3).uppercase().required()
   }),
 

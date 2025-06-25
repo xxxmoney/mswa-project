@@ -3,7 +3,7 @@ const Joi = require('joi');
 const countryValidation = {
   // Create country validation
   create: Joi.object({
-    isoCode: Joi.string().length(2).uppercase().required(),
+    isoCode: Joi.string().min(2).max(10).uppercase().required(),
     name: Joi.string().min(1).max(100).required(),
     currencyIsoCode: Joi.string().length(3).uppercase().required(),
     validFrom: Joi.date().optional(),

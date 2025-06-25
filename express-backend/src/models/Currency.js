@@ -29,6 +29,10 @@ const currencySchema = new mongoose.Schema({
     type: Date,
     default: null
   },
+  symbol: {
+    type: String,
+    default: null
+  },
   version: {
     type: Number,
     default: 1
