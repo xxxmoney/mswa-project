@@ -1,0 +1,96 @@
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const helmet = require('helmet');
+const compression = require('compression');
+const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
+require('dotenv').config();
+
+const { connectDB } = require('new-app/server/src/config/database');
+const { errorHandler } = require('new-app/server/src/middleware/errorHandler');
+const { notFound } = require('new-app/server/src/middleware/notFound');
+
+// Import routes
+const authRoutes = require('new-app/server/src/routes/auth');
+const countryRoutes = require('new-app/server/src/routes/countries');
+const currencyRoutes = require('new-app/server/src/routes/currencies');
+
+const app = express();
+const PORT = process.env.PORT || 8000;
+
+// Connect to MongoDB
+connectDB();
+
+// Security middleware
+app.use(helmet());
+app.use(compression());
+
+// CORS configuration
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  credentials: true
+}));
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // limit each IP to 100 requests per windowMs
+  message: {
+    error: 'Too many requests from this IP, please try again later.'
+  }
+});
+app.use('/api/', limiter);
+
+// Body parsing middleware
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Logging middleware
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+} else {
+  app.use(morgan('combined'));
+}
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV
+  });
+});
+
+// API routes
+app.use('/api/auth', authRoutes);
+app.use('/api/countries', countryRoutes);
+app.use('/api/currencies', currencyRoutes);
+
+// API documentation
+app.get('/api', (req, res) => {
+  res.json({
+    message: 'Reference Data API',
+    version: '1.0.0',
+    endpoints: {
+      auth: '/api/auth',
+      countries: '/api/countries',
+      currencies: '/api/currencies'
+    }
+  });
+});
+
+// Error handling middleware
+app.use(notFound);
+app.use(errorHandler);
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📊 Environment: ${process.env.NODE_ENV}`);
+  console.log(`🔗 Health check: http://localhost:${PORT}/health`);
+  console.log(`📚 API docs: http://localhost:${PORT}/api`);
+});
+
+module.exports = app; 
