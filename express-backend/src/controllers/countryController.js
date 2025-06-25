@@ -9,9 +9,10 @@ const countryController = {
     try {
       const id = uuidv4();
       
-      const requestBody = { ...req.body, id };
-      
+      const requestBody = { ...req.body };
+
       const { error } = countryValidation.create.validate(requestBody);
+
       if (error) {
         return res.status(400).json({
           success: false,
@@ -49,7 +50,7 @@ const countryController = {
         validTo: validTo ? new Date(validTo) : null
       };
 
-      const createdCountry = await Country.create(countryData);
+      const createdCountry = await Country.createCountry(countryData);
 
       res.status(201).json({
         success: true,

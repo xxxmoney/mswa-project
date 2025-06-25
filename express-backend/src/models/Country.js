@@ -34,6 +34,10 @@ const countrySchema = new mongoose.Schema({
   validTo: {
     type: Date,
     default: null
+  },
+  version: {
+    type: Number,
+    default: 1
   }
 }, {
   timestamps: true,
@@ -73,7 +77,7 @@ countrySchema.statics.getHistory = function(isoCode, pageInfo = {}) {
   const { pageIndex = 0, pageSize = 50 } = pageInfo;
   const skip = pageIndex * pageSize;
   
-  return this.find({ isoCode, validTo: { $ne: null } })
+  return this.find({ isoCode })
     .sort({ validFrom: 1 })
     .skip(skip)
     .limit(pageSize);
@@ -145,6 +149,16 @@ countrySchema.statics.archiveCountry = async function(isoCode) {
   }
 
   return updatedDocument;
+};
+
+countrySchema.statics.createCountry = async function(data) {
+  const existingCountry = await this.findOne({ isoCode: data.isoCode }, null, { sort: { validTo: -1 }, limit: 1 });
+
+  if (existingCountry) {
+    data.version = (existingCountry.version || 0) + 1;
+  }
+
+  return await this.create(data);
 };
 
 module.exports = mongoose.model('Country', countrySchema); 
