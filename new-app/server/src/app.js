@@ -7,14 +7,14 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
-const { connectDB } = require('new-app/server/src/config/database');
-const { errorHandler } = require('new-app/server/src/middleware/errorHandler');
-const { notFound } = require('new-app/server/src/middleware/notFound');
+const { connectDB } = require('./config/database');
+const { errorHandler } = require('./middleware/errorHandler');
+const { notFound } = require('./middleware/notFound');
 
 // Import routes
-const authRoutes = require('new-app/server/src/routes/auth');
-const countryRoutes = require('new-app/server/src/routes/countries');
-const currencyRoutes = require('new-app/server/src/routes/currencies');
+const authRoutes = require('./routes/auth');
+const countryRoutes = require('./routes/countries');
+const currencyRoutes = require('./routes/currencies');
 
 const app = express();
 const PORT = process.env.PORT || 8000;

@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('new-app/server/src/app');
+const app = require('../app');
 const { v4: uuidv4 } = require('uuid');
 
 describe('API Endpoints', () => {

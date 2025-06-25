@@ -1,6 +1,6 @@
-const Country = require('new-app/server/src/models/Country');
-const Currency = require('new-app/server/src/models/Currency');
-const countryValidation = require('new-app/server/src/validation/countryValidation');
+const Country = require('../models/Country');
+const Currency = require('../models/Currency');
+const countryValidation = require('../validation/countryValidation');
 const { v4: uuidv4 } = require('uuid');
 
 const countryController = {

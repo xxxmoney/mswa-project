@@ -1,5 +1,5 @@
 const express = require('express');
-const currencyController = require('new-app/server/src/controllers/currencyController');
+const currencyController = require('../controllers/currencyController');
 
 const router = express.Router();
 

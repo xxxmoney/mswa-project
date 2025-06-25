@@ -1,5 +1,5 @@
-const Currency = require('new-app/server/src/models/Currency');
-const currencyValidation = require('new-app/server/src/validation/currencyValidation');
+const Currency = require('../models/Currency');
+const currencyValidation = require('../validation/currencyValidation');
 const { v4: uuidv4 } = require('uuid');
 
 const currencyController = {
