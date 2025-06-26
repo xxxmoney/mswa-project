@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: MSWA Project API
-  description: API for managing currencies and countries with versioning support
+  description: API for managing currencies and countries with versioning support and notification system
   version: 1.0.0
   contact:
     name: MSWA Project Team
@@ -265,12 +265,19 @@ paths:
                     properties:
                       country:
                         $ref: '#/components/schemas/Country'
+                        nullable: true
                       itemList:
                         type: array
                         items:
                           $ref: '#/components/schemas/Currency'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '404':
+          description: Currency not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -315,7 +322,7 @@ paths:
                       itemList:
                         type: array
                         items:
-                          $ref: '#/components/schemas/CountryWithCurrency'
+                          $ref: '#/components/schemas/CountryWithCurrencyName'
                       pageInfo:
                         $ref: '#/components/schemas/PageInfo'
         '400':
@@ -439,7 +446,7 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
-          description: Country or linked currency not found
+          description: Country not found
           content:
             application/json:
               schema:
@@ -535,8 +542,16 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/CountryWithCurrencyName'
+                      pageInfo:
+                        $ref: '#/components/schemas/PageInfo'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '404':
+          description: Country not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -600,6 +615,331 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /notifications:
+    get:
+      summary: Get all notifications
+      description: Retrieve a paginated list of notifications with optional filtering
+      tags:
+        - Notifications
+      parameters:
+        - name: pageIndex
+          in: query
+          description: Page index (0-based)
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: pageSize
+          in: query
+          description: Number of items per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+        - name: type
+          in: query
+          description: Filter by notification type
+          schema:
+            type: string
+            enum: [CREATE, UPDATE, ARCHIVE]
+        - name: entityType
+          in: query
+          description: Filter by entity type
+          schema:
+            type: string
+            enum: [Country, Currency]
+        - name: isRead
+          in: query
+          description: Filter by read status
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      notifications:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Notification'
+                      pagination:
+                        $ref: '#/components/schemas/NotificationPagination'
+                      unreadCount:
+                        type: integer
+                        description: Total number of unread notifications
+                        example: 25
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /notifications/unread-count:
+    get:
+      summary: Get unread notifications count
+      description: Get the count of unread notifications with optional filtering
+      tags:
+        - Notifications
+      parameters:
+        - name: type
+          in: query
+          description: Filter by notification type
+          schema:
+            type: string
+            enum: [CREATE, UPDATE, ARCHIVE]
+        - name: entityType
+          in: query
+          description: Filter by entity type
+          schema:
+            type: string
+            enum: [Country, Currency]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      unreadCount:
+                        type: integer
+                        description: Number of unread notifications
+                        example: 25
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /notifications/{id}:
+    get:
+      summary: Get notification by ID
+      description: Retrieve a specific notification by its ID
+      tags:
+        - Notifications
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Notification UUID
+          schema:
+            type: string
+            format: uuid
+            example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Notification'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          description: Notification not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    
+    delete:
+      summary: Delete notification
+      description: Delete a specific notification by its ID
+      tags:
+        - Notifications
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Notification UUID
+          schema:
+            type: string
+            format: uuid
+            example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: Notification deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Notification deleted successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          description: Notification not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /notifications/entity/{entityType}/{entityIdentifier}:
+    get:
+      summary: Get notifications by entity
+      description: Retrieve notifications for a specific entity
+      tags:
+        - Notifications
+      parameters:
+        - name: entityType
+          in: path
+          required: true
+          description: Type of entity
+          schema:
+            type: string
+            enum: [Country, Currency]
+        - name: entityIdentifier
+          in: path
+          required: true
+          description: Entity identifier (e.g., ISO code)
+          schema:
+            type: string
+            example: US
+        - name: pageIndex
+          in: query
+          description: Page index (0-based)
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: pageSize
+          in: query
+          description: Number of items per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      notifications:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Notification'
+                      pagination:
+                        $ref: '#/components/schemas/NotificationPagination'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /notifications/mark-read:
+    put:
+      summary: Mark notifications as read
+      description: Mark specific notifications as read
+      tags:
+        - Notifications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MarkAsReadRequest'
+      responses:
+        '200':
+          description: Notifications marked as read successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Marked 3 notifications as read
+                      modifiedCount:
+                        type: integer
+                        description: Number of notifications marked as read
+                        example: 3
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /notifications/mark-all-read:
+    put:
+      summary: Mark all notifications as read
+      description: Mark all notifications as read with optional filtering
+      tags:
+        - Notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MarkAllAsReadRequest'
+      responses:
+        '200':
+          description: All notifications marked as read successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Marked 25 notifications as read
+                      modifiedCount:
+                        type: integer
+                        description: Number of notifications marked as read
+                        example: 25
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -836,6 +1176,95 @@ components:
           format: date-time
           description: Date from which this country is valid
 
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique notification identifier
+          example: 550e8400-e29b-41d4-a716-446655440000
+        type:
+          type: string
+          enum: [CREATE, UPDATE, ARCHIVE]
+          description: Type of notification
+          example: CREATE
+        entityType:
+          type: string
+          enum: [Country, Currency]
+          description: Type of entity this notification relates to
+          example: Country
+        entityId:
+          type: string
+          format: uuid
+          description: UUID of the related entity
+          example: 550e8400-e29b-41d4-a716-446655440001
+        entityIdentifier:
+          type: string
+          description: Identifier of the related entity (e.g., ISO code)
+          example: US
+        message:
+          type: string
+          description: Human-readable notification message
+          example: New country "US" has been created
+        details:
+          type: object
+          description: Additional details about the notification
+          example:
+            countryName: United States
+            currencyIsoCode: USD
+            validFrom: "2024-01-01T00:00:00.000Z"
+            validTo: null
+            action: created
+            timestamp: "2024-01-01T10:30:00.000Z"
+        isRead:
+          type: boolean
+          description: Whether the notification has been read
+          example: false
+        createdAt:
+          type: string
+          format: date-time
+          description: When the notification was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the notification was last updated
+      required:
+        - id
+        - type
+        - entityType
+        - entityId
+        - entityIdentifier
+        - message
+        - isRead
+        - createdAt
+        - updatedAt
+
+    MarkAsReadRequest:
+      type: object
+      properties:
+        notificationIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: Array of notification UUIDs to mark as read
+          example: ["550e8400-e29b-41d4-a716-446655440000", "550e8400-e29b-41d4-a716-446655440001"]
+      required:
+        - notificationIds
+
+    MarkAllAsReadRequest:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [CREATE, UPDATE, ARCHIVE]
+          description: Filter by notification type
+        entityType:
+          type: string
+          enum: [Country, Currency]
+          description: Filter by entity type
+
     PageInfo:
       type: object
       properties:
@@ -850,6 +1279,20 @@ components:
           maximum: 100
           description: Number of items per page
           example: 50
+
+    NotificationPagination:
+      allOf:
+        - $ref: '#/components/schemas/PageInfo'
+        - type: object
+          properties:
+            totalCount:
+              type: integer
+              description: Total number of notifications
+              example: 100
+            totalPages:
+              type: integer
+              description: Total number of pages
+              example: 2
 
     ErrorResponse:
       type: object
@@ -881,4 +1324,6 @@ tags:
   - name: Currencies
     description: Operations for managing currencies
   - name: Countries
-    description: Operations for managing countries 
+    description: Operations for managing countries
+  - name: Notifications
+    description: Operations for managing notifications and tracking data changes 

@@ -1,6 +1,7 @@
 const Country = require('../models/Country');
 const Currency = require('../models/Currency');
 const countryValidation = require('../validation/countryValidation');
+const NotificationService = require('../services/notificationService');
 const { v4: uuidv4 } = require('uuid');
 
 const countryController = {
@@ -51,6 +52,19 @@ const countryController = {
       };
 
       const createdCountry = await Country.createCountry(countryData);
+
+      // Create notification for country creation
+      await NotificationService.createCreationNotification(
+        'Country',
+        createdCountry.id,
+        createdCountry.isoCode,
+        {
+          countryName: createdCountry.name,
+          currencyIsoCode: createdCountry.currencyIsoCode,
+          validFrom: createdCountry.validFrom,
+          validTo: createdCountry.validTo
+        }
+      );
 
       res.status(201).json({
         success: true,
@@ -145,6 +159,20 @@ const countryController = {
         });
       }
 
+      // Create notification for country update
+      await NotificationService.createUpdateNotification(
+        'Country',
+        updatedCountry.id,
+        updatedCountry.isoCode,
+        {
+          countryName: updatedCountry.name,
+          currencyIsoCode: updatedCountry.currencyIsoCode,
+          validFrom: updatedCountry.validFrom,
+          validTo: updatedCountry.validTo,
+          changes: updateData
+        }
+      );
+
       const currency = await Currency.getByIsoCode(updatedCountry.currencyIsoCode);
       const currencyName = currency ? currency.name : "N/A";
 
@@ -180,6 +208,19 @@ const countryController = {
           error: `Country with ISO code ${isoCode} not found to archive`
         });
       }
+
+      // Create notification for country archivation
+      await NotificationService.createArchiveNotification(
+        'Country',
+        archivedCountry.id,
+        archivedCountry.isoCode,
+        {
+          countryName: archivedCountry.name,
+          currencyIsoCode: archivedCountry.currencyIsoCode,
+          validFrom: archivedCountry.validFrom,
+          validTo: archivedCountry.validTo
+        }
+      );
 
       let currencyName = "N/A";
       if (archivedCountry.currencyIsoCode) {

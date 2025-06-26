@@ -1,6 +1,7 @@
 const Currency = require('../models/Currency');
 const Country = require('../models/Country');
 const currencyValidation = require('../validation/currencyValidation');
+const NotificationService = require('../services/notificationService');
 const { v4: uuidv4 } = require('uuid');
 
 const currencyController = {
@@ -39,6 +40,19 @@ const currencyController = {
       };
 
       const createdCurrency = await Currency.createCurrency(currencyData);
+
+      // Create notification for currency creation
+      await NotificationService.createCreationNotification(
+        'Currency',
+        createdCurrency.id,
+        createdCurrency.isoCode,
+        {
+          currencyName: createdCurrency.name,
+          symbol: createdCurrency.symbol,
+          validFrom: createdCurrency.validFrom,
+          validTo: createdCurrency.validTo
+        }
+      );
 
       res.status(201).json({
         success: true,
@@ -101,6 +115,20 @@ const currencyController = {
         });
       }
 
+      // Create notification for currency update
+      await NotificationService.createUpdateNotification(
+        'Currency',
+        updatedCurrency.id,
+        updatedCurrency.isoCode,
+        {
+          currencyName: updatedCurrency.name,
+          symbol: updatedCurrency.symbol,
+          validFrom: updatedCurrency.validFrom,
+          validTo: updatedCurrency.validTo,
+          changes: updateData
+        }
+      );
+
       res.json({
         success: true,
         data: updatedCurrency
@@ -130,6 +158,19 @@ const currencyController = {
           error: `Currency with ISO code ${isoCode} not found to archive`
         });
       }
+
+      // Create notification for currency archivation
+      await NotificationService.createArchiveNotification(
+        'Currency',
+        archivedCurrency.id,
+        archivedCurrency.isoCode,
+        {
+          currencyName: archivedCurrency.name,
+          symbol: archivedCurrency.symbol,
+          validFrom: archivedCurrency.validFrom,
+          validTo: archivedCurrency.validTo
+        }
+      );
 
       res.json({
         success: true,

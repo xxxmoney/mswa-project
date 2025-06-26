@@ -6,7 +6,9 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { CountryWithCurrencyName } from './countryWithCurrencyName';
+import type { PageInfo } from './pageInfo';
 
 export type GetCountriesIsoCodeHistory200Data = {
     itemList?: CountryWithCurrencyName[];
+    pageInfo?: PageInfo;
 };

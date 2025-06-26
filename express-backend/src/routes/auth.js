@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Joi = require('joi');
+const User = require('../models/User');
 
 const router = express.Router();
 
@@ -17,16 +18,7 @@ const registerSchema = Joi.object({
   password: Joi.string().min(6).required()
 });
 
-// Mock user data (in production, this would be in a database)
-const users = [
-  {
-    id: '1',
-    name: 'Admin User',
-    email: 'admin@example.com',
-    password: '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-    role: 'admin'
-  }
-];
+
 
 // Login endpoint
 router.post('/login', async (req, res) => {
@@ -43,7 +35,7 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     // Find user by email
-    const user = users.find(u => u.email === email);
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -106,7 +98,7 @@ router.post('/register', async (req, res) => {
     const { name, email, password } = req.body;
 
     // Check if user already exists
-    const existingUser = users.find(u => u.email === email);
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(409).json({
         success: false,
@@ -119,14 +111,13 @@ router.post('/register', async (req, res) => {
 
     // Create new user (in production, save to database)
     const newUser = {
-      id: (users.length + 1).toString(),
       name,
       email,
       password: hashedPassword,
-      role: 'user'
+      role: 'admin'
     };
 
-    users.push(newUser);
+    await User.create(newUser);
 
     res.status(201).json({
       success: true,

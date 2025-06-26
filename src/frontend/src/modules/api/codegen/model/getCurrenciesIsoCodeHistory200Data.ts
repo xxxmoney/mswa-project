@@ -9,6 +9,7 @@ import type { Country } from './country';
 import type { Currency } from './currency';
 
 export type GetCurrenciesIsoCodeHistory200Data = {
+    /** @nullable */
     country?: Country;
     itemList?: Currency[];
 };

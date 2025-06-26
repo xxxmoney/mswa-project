@@ -5,10 +5,7 @@
  * API for managing currencies and countries with versioning support
  * OpenAPI spec version: 1.0.0
  */
-import type { CountryWithCurrencyName } from './countryWithCurrencyName';
+import type { NotificationPaginationAllOf } from './notificationPaginationAllOf';
 import type { PageInfo } from './pageInfo';
 
-export type GetCountries200Data = {
-    itemList?: CountryWithCurrencyName[];
-    pageInfo?: PageInfo;
-};
+export type NotificationPagination = PageInfo & NotificationPaginationAllOf;

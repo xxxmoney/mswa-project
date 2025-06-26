@@ -31,6 +31,8 @@ import type {
     DeleteCountriesIsoCodePathParameters,
     DeleteCurrenciesIsoCode200,
     DeleteCurrenciesIsoCodePathParameters,
+    DeleteNotificationsId200,
+    DeleteNotificationsIdPathParameters,
     ErrorResponse,
     GetCountries200,
     GetCountriesCurrencyCurrencyIsoCode200,
@@ -49,13 +51,26 @@ import type {
     GetCurrenciesIsoCodeHistoryPathParameters,
     GetCurrenciesIsoCodePathParameters,
     GetCurrenciesParams,
+    GetNotifications200,
+    GetNotificationsEntityEntityTypeEntityIdentifier200,
+    GetNotificationsEntityEntityTypeEntityIdentifierParams,
+    GetNotificationsEntityEntityTypeEntityIdentifierPathParameters,
+    GetNotificationsId200,
+    GetNotificationsIdPathParameters,
+    GetNotificationsParams,
+    GetNotificationsUnreadCount200,
+    GetNotificationsUnreadCountParams,
     InternalServerErrorResponse,
+    MarkAllAsReadRequest,
+    MarkAsReadRequest,
     PostCountries201,
     PostCurrencies201,
     PutCountriesIsoCode200,
     PutCountriesIsoCodePathParameters,
     PutCurrenciesIsoCode200,
     PutCurrenciesIsoCodePathParameters,
+    PutNotificationsMarkAllRead200,
+    PutNotificationsMarkRead200,
     UpdateCountryRequest,
     UpdateCurrencyRequest,
 } from './model';
@@ -523,7 +538,7 @@ export const getGetCurrenciesIsoCodeHistoryQueryKey = (
 
 export const getGetCurrenciesIsoCodeHistoryQueryOptions = <
     TData = Awaited<ReturnType<typeof getCurrenciesIsoCodeHistory>>,
-    TError = BadRequestResponse | InternalServerErrorResponse,
+    TError = BadRequestResponse | ErrorResponse | InternalServerErrorResponse,
 >(
     { isoCode }: GetCurrenciesIsoCodeHistoryPathParameters,
     params?: GetCurrenciesIsoCodeHistoryParams,
@@ -548,11 +563,11 @@ export const getGetCurrenciesIsoCodeHistoryQueryOptions = <
 export type GetCurrenciesIsoCodeHistoryQueryResult = NonNullable<
     Awaited<ReturnType<typeof getCurrenciesIsoCodeHistory>>
 >;
-export type GetCurrenciesIsoCodeHistoryQueryError = BadRequestResponse | InternalServerErrorResponse;
+export type GetCurrenciesIsoCodeHistoryQueryError = BadRequestResponse | ErrorResponse | InternalServerErrorResponse;
 
 export function useGetCurrenciesIsoCodeHistory<
     TData = Awaited<ReturnType<typeof getCurrenciesIsoCodeHistory>>,
-    TError = BadRequestResponse | InternalServerErrorResponse,
+    TError = BadRequestResponse | ErrorResponse | InternalServerErrorResponse,
 >(
     pathParams: GetCurrenciesIsoCodeHistoryPathParameters,
     params: undefined | GetCurrenciesIsoCodeHistoryParams,
@@ -571,7 +586,7 @@ export function useGetCurrenciesIsoCodeHistory<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetCurrenciesIsoCodeHistory<
     TData = Awaited<ReturnType<typeof getCurrenciesIsoCodeHistory>>,
-    TError = BadRequestResponse | InternalServerErrorResponse,
+    TError = BadRequestResponse | ErrorResponse | InternalServerErrorResponse,
 >(
     pathParams: GetCurrenciesIsoCodeHistoryPathParameters,
     params?: GetCurrenciesIsoCodeHistoryParams,
@@ -590,7 +605,7 @@ export function useGetCurrenciesIsoCodeHistory<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetCurrenciesIsoCodeHistory<
     TData = Awaited<ReturnType<typeof getCurrenciesIsoCodeHistory>>,
-    TError = BadRequestResponse | InternalServerErrorResponse,
+    TError = BadRequestResponse | ErrorResponse | InternalServerErrorResponse,
 >(
     pathParams: GetCurrenciesIsoCodeHistoryPathParameters,
     params?: GetCurrenciesIsoCodeHistoryParams,
@@ -605,7 +620,7 @@ export function useGetCurrenciesIsoCodeHistory<
 
 export function useGetCurrenciesIsoCodeHistory<
     TData = Awaited<ReturnType<typeof getCurrenciesIsoCodeHistory>>,
-    TError = BadRequestResponse | InternalServerErrorResponse,
+    TError = BadRequestResponse | ErrorResponse | InternalServerErrorResponse,
 >(
     { isoCode }: GetCurrenciesIsoCodeHistoryPathParameters,
     params?: GetCurrenciesIsoCodeHistoryParams,
@@ -1083,7 +1098,7 @@ export const getGetCountriesIsoCodeHistoryQueryKey = (
 
 export const getGetCountriesIsoCodeHistoryQueryOptions = <
     TData = Awaited<ReturnType<typeof getCountriesIsoCodeHistory>>,
-    TError = BadRequestResponse | InternalServerErrorResponse,
+    TError = BadRequestResponse | ErrorResponse | InternalServerErrorResponse,
 >(
     { isoCode }: GetCountriesIsoCodeHistoryPathParameters,
     params?: GetCountriesIsoCodeHistoryParams,
@@ -1106,11 +1121,11 @@ export const getGetCountriesIsoCodeHistoryQueryOptions = <
 };
 
 export type GetCountriesIsoCodeHistoryQueryResult = NonNullable<Awaited<ReturnType<typeof getCountriesIsoCodeHistory>>>;
-export type GetCountriesIsoCodeHistoryQueryError = BadRequestResponse | InternalServerErrorResponse;
+export type GetCountriesIsoCodeHistoryQueryError = BadRequestResponse | ErrorResponse | InternalServerErrorResponse;
 
 export function useGetCountriesIsoCodeHistory<
     TData = Awaited<ReturnType<typeof getCountriesIsoCodeHistory>>,
-    TError = BadRequestResponse | InternalServerErrorResponse,
+    TError = BadRequestResponse | ErrorResponse | InternalServerErrorResponse,
 >(
     pathParams: GetCountriesIsoCodeHistoryPathParameters,
     params: undefined | GetCountriesIsoCodeHistoryParams,
@@ -1129,7 +1144,7 @@ export function useGetCountriesIsoCodeHistory<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetCountriesIsoCodeHistory<
     TData = Awaited<ReturnType<typeof getCountriesIsoCodeHistory>>,
-    TError = BadRequestResponse | InternalServerErrorResponse,
+    TError = BadRequestResponse | ErrorResponse | InternalServerErrorResponse,
 >(
     pathParams: GetCountriesIsoCodeHistoryPathParameters,
     params?: GetCountriesIsoCodeHistoryParams,
@@ -1148,7 +1163,7 @@ export function useGetCountriesIsoCodeHistory<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetCountriesIsoCodeHistory<
     TData = Awaited<ReturnType<typeof getCountriesIsoCodeHistory>>,
-    TError = BadRequestResponse | InternalServerErrorResponse,
+    TError = BadRequestResponse | ErrorResponse | InternalServerErrorResponse,
 >(
     pathParams: GetCountriesIsoCodeHistoryPathParameters,
     params?: GetCountriesIsoCodeHistoryParams,
@@ -1163,7 +1178,7 @@ export function useGetCountriesIsoCodeHistory<
 
 export function useGetCountriesIsoCodeHistory<
     TData = Awaited<ReturnType<typeof getCountriesIsoCodeHistory>>,
-    TError = BadRequestResponse | InternalServerErrorResponse,
+    TError = BadRequestResponse | ErrorResponse | InternalServerErrorResponse,
 >(
     { isoCode }: GetCountriesIsoCodeHistoryPathParameters,
     params?: GetCountriesIsoCodeHistoryParams,
@@ -1324,3 +1339,706 @@ export function useGetCountriesCurrencyCurrencyIsoCode<
 
     return query;
 }
+
+/**
+ * Retrieve a paginated list of notifications with optional filtering
+ * @summary Get all notifications
+ */
+export const getNotifications = (params?: GetNotificationsParams, signal?: AbortSignal) => {
+    return fetcher<GetNotifications200>({ url: `/notifications`, method: 'GET', params, signal });
+};
+
+export const getGetNotificationsQueryKey = (params?: GetNotificationsParams) => {
+    return [`/notifications`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetNotificationsQueryOptions = <
+    TData = Awaited<ReturnType<typeof getNotifications>>,
+    TError = BadRequestResponse | InternalServerErrorResponse,
+>(
+    params?: GetNotificationsParams,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotifications>>, TError, TData>> },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey = queryOptions?.queryKey ?? getGetNotificationsQueryKey(params);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getNotifications>>> = ({ signal }) =>
+        getNotifications(params, signal);
+
+    return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+        Awaited<ReturnType<typeof getNotifications>>,
+        TError,
+        TData
+    > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetNotificationsQueryResult = NonNullable<Awaited<ReturnType<typeof getNotifications>>>;
+export type GetNotificationsQueryError = BadRequestResponse | InternalServerErrorResponse;
+
+export function useGetNotifications<
+    TData = Awaited<ReturnType<typeof getNotifications>>,
+    TError = BadRequestResponse | InternalServerErrorResponse,
+>(
+    params: undefined | GetNotificationsParams,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotifications>>, TError, TData>> &
+            Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof getNotifications>>,
+                    TError,
+                    Awaited<ReturnType<typeof getNotifications>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetNotifications<
+    TData = Awaited<ReturnType<typeof getNotifications>>,
+    TError = BadRequestResponse | InternalServerErrorResponse,
+>(
+    params?: GetNotificationsParams,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotifications>>, TError, TData>> &
+            Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof getNotifications>>,
+                    TError,
+                    Awaited<ReturnType<typeof getNotifications>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetNotifications<
+    TData = Awaited<ReturnType<typeof getNotifications>>,
+    TError = BadRequestResponse | InternalServerErrorResponse,
+>(
+    params?: GetNotificationsParams,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotifications>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get all notifications
+ */
+
+export function useGetNotifications<
+    TData = Awaited<ReturnType<typeof getNotifications>>,
+    TError = BadRequestResponse | InternalServerErrorResponse,
+>(
+    params?: GetNotificationsParams,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotifications>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getGetNotificationsQueryOptions(params, options);
+
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+
+    query.queryKey = queryOptions.queryKey;
+
+    return query;
+}
+
+/**
+ * Get the count of unread notifications with optional filtering
+ * @summary Get unread notifications count
+ */
+export const getNotificationsUnreadCount = (params?: GetNotificationsUnreadCountParams, signal?: AbortSignal) => {
+    return fetcher<GetNotificationsUnreadCount200>({
+        url: `/notifications/unread-count`,
+        method: 'GET',
+        params,
+        signal,
+    });
+};
+
+export const getGetNotificationsUnreadCountQueryKey = (params?: GetNotificationsUnreadCountParams) => {
+    return [`/notifications/unread-count`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetNotificationsUnreadCountQueryOptions = <
+    TData = Awaited<ReturnType<typeof getNotificationsUnreadCount>>,
+    TError = InternalServerErrorResponse,
+>(
+    params?: GetNotificationsUnreadCountParams,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotificationsUnreadCount>>, TError, TData>>;
+    },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey = queryOptions?.queryKey ?? getGetNotificationsUnreadCountQueryKey(params);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getNotificationsUnreadCount>>> = ({ signal }) =>
+        getNotificationsUnreadCount(params, signal);
+
+    return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+        Awaited<ReturnType<typeof getNotificationsUnreadCount>>,
+        TError,
+        TData
+    > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetNotificationsUnreadCountQueryResult = NonNullable<
+    Awaited<ReturnType<typeof getNotificationsUnreadCount>>
+>;
+export type GetNotificationsUnreadCountQueryError = InternalServerErrorResponse;
+
+export function useGetNotificationsUnreadCount<
+    TData = Awaited<ReturnType<typeof getNotificationsUnreadCount>>,
+    TError = InternalServerErrorResponse,
+>(
+    params: undefined | GetNotificationsUnreadCountParams,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotificationsUnreadCount>>, TError, TData>> &
+            Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof getNotificationsUnreadCount>>,
+                    TError,
+                    Awaited<ReturnType<typeof getNotificationsUnreadCount>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetNotificationsUnreadCount<
+    TData = Awaited<ReturnType<typeof getNotificationsUnreadCount>>,
+    TError = InternalServerErrorResponse,
+>(
+    params?: GetNotificationsUnreadCountParams,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotificationsUnreadCount>>, TError, TData>> &
+            Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof getNotificationsUnreadCount>>,
+                    TError,
+                    Awaited<ReturnType<typeof getNotificationsUnreadCount>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetNotificationsUnreadCount<
+    TData = Awaited<ReturnType<typeof getNotificationsUnreadCount>>,
+    TError = InternalServerErrorResponse,
+>(
+    params?: GetNotificationsUnreadCountParams,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotificationsUnreadCount>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get unread notifications count
+ */
+
+export function useGetNotificationsUnreadCount<
+    TData = Awaited<ReturnType<typeof getNotificationsUnreadCount>>,
+    TError = InternalServerErrorResponse,
+>(
+    params?: GetNotificationsUnreadCountParams,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotificationsUnreadCount>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getGetNotificationsUnreadCountQueryOptions(params, options);
+
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+
+    query.queryKey = queryOptions.queryKey;
+
+    return query;
+}
+
+/**
+ * Retrieve a specific notification by its ID
+ * @summary Get notification by ID
+ */
+export const getNotificationsId = ({ id }: GetNotificationsIdPathParameters, signal?: AbortSignal) => {
+    return fetcher<GetNotificationsId200>({ url: `/notifications/${id}`, method: 'GET', signal });
+};
+
+export const getGetNotificationsIdQueryKey = ({ id }: GetNotificationsIdPathParameters) => {
+    return [`/notifications/${id}`] as const;
+};
+
+export const getGetNotificationsIdQueryOptions = <
+    TData = Awaited<ReturnType<typeof getNotificationsId>>,
+    TError = BadRequestResponse | ErrorResponse | InternalServerErrorResponse,
+>(
+    { id }: GetNotificationsIdPathParameters,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotificationsId>>, TError, TData>> },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey = queryOptions?.queryKey ?? getGetNotificationsIdQueryKey({ id });
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getNotificationsId>>> = ({ signal }) =>
+        getNotificationsId({ id }, signal);
+
+    return { queryKey, queryFn, enabled: !!id, ...queryOptions } as UseQueryOptions<
+        Awaited<ReturnType<typeof getNotificationsId>>,
+        TError,
+        TData
+    > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetNotificationsIdQueryResult = NonNullable<Awaited<ReturnType<typeof getNotificationsId>>>;
+export type GetNotificationsIdQueryError = BadRequestResponse | ErrorResponse | InternalServerErrorResponse;
+
+export function useGetNotificationsId<
+    TData = Awaited<ReturnType<typeof getNotificationsId>>,
+    TError = BadRequestResponse | ErrorResponse | InternalServerErrorResponse,
+>(
+    pathParams: GetNotificationsIdPathParameters,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotificationsId>>, TError, TData>> &
+            Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof getNotificationsId>>,
+                    TError,
+                    Awaited<ReturnType<typeof getNotificationsId>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetNotificationsId<
+    TData = Awaited<ReturnType<typeof getNotificationsId>>,
+    TError = BadRequestResponse | ErrorResponse | InternalServerErrorResponse,
+>(
+    pathParams: GetNotificationsIdPathParameters,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotificationsId>>, TError, TData>> &
+            Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof getNotificationsId>>,
+                    TError,
+                    Awaited<ReturnType<typeof getNotificationsId>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetNotificationsId<
+    TData = Awaited<ReturnType<typeof getNotificationsId>>,
+    TError = BadRequestResponse | ErrorResponse | InternalServerErrorResponse,
+>(
+    pathParams: GetNotificationsIdPathParameters,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotificationsId>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get notification by ID
+ */
+
+export function useGetNotificationsId<
+    TData = Awaited<ReturnType<typeof getNotificationsId>>,
+    TError = BadRequestResponse | ErrorResponse | InternalServerErrorResponse,
+>(
+    { id }: GetNotificationsIdPathParameters,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotificationsId>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getGetNotificationsIdQueryOptions({ id }, options);
+
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+
+    query.queryKey = queryOptions.queryKey;
+
+    return query;
+}
+
+/**
+ * Delete a specific notification by its ID
+ * @summary Delete notification
+ */
+export const deleteNotificationsId = ({ id }: DeleteNotificationsIdPathParameters) => {
+    return fetcher<DeleteNotificationsId200>({ url: `/notifications/${id}`, method: 'DELETE' });
+};
+
+export const getDeleteNotificationsIdMutationOptions = <
+    TError = BadRequestResponse | ErrorResponse | InternalServerErrorResponse,
+    TContext = unknown,
+>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof deleteNotificationsId>>,
+        TError,
+        { pathParams: DeleteNotificationsIdPathParameters },
+        TContext
+    >;
+}): UseMutationOptions<
+    Awaited<ReturnType<typeof deleteNotificationsId>>,
+    TError,
+    { pathParams: DeleteNotificationsIdPathParameters },
+    TContext
+> => {
+    const mutationKey = ['deleteNotificationsId'];
+    const { mutation: mutationOptions } = options
+        ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
+            ? options
+            : { ...options, mutation: { ...options.mutation, mutationKey } }
+        : { mutation: { mutationKey } };
+
+    const mutationFn: MutationFunction<
+        Awaited<ReturnType<typeof deleteNotificationsId>>,
+        { pathParams: DeleteNotificationsIdPathParameters }
+    > = props => {
+        const { pathParams } = props ?? {};
+
+        return deleteNotificationsId(pathParams);
+    };
+
+    return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteNotificationsIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteNotificationsId>>>;
+
+export type DeleteNotificationsIdMutationError = BadRequestResponse | ErrorResponse | InternalServerErrorResponse;
+
+/**
+ * @summary Delete notification
+ */
+export const useDeleteNotificationsId = <
+    TError = BadRequestResponse | ErrorResponse | InternalServerErrorResponse,
+    TContext = unknown,
+>(
+    options?: {
+        mutation?: UseMutationOptions<
+            Awaited<ReturnType<typeof deleteNotificationsId>>,
+            TError,
+            { pathParams: DeleteNotificationsIdPathParameters },
+            TContext
+        >;
+    },
+    queryClient?: QueryClient,
+): UseMutationResult<
+    Awaited<ReturnType<typeof deleteNotificationsId>>,
+    TError,
+    { pathParams: DeleteNotificationsIdPathParameters },
+    TContext
+> => {
+    const mutationOptions = getDeleteNotificationsIdMutationOptions(options);
+
+    return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Retrieve notifications for a specific entity
+ * @summary Get notifications by entity
+ */
+export const getNotificationsEntityEntityTypeEntityIdentifier = (
+    { entityType, entityIdentifier }: GetNotificationsEntityEntityTypeEntityIdentifierPathParameters,
+    params?: GetNotificationsEntityEntityTypeEntityIdentifierParams,
+    signal?: AbortSignal,
+) => {
+    return fetcher<GetNotificationsEntityEntityTypeEntityIdentifier200>({
+        url: `/notifications/entity/${entityType}/${entityIdentifier}`,
+        method: 'GET',
+        params,
+        signal,
+    });
+};
+
+export const getGetNotificationsEntityEntityTypeEntityIdentifierQueryKey = (
+    { entityType, entityIdentifier }: GetNotificationsEntityEntityTypeEntityIdentifierPathParameters,
+    params?: GetNotificationsEntityEntityTypeEntityIdentifierParams,
+) => {
+    return [`/notifications/entity/${entityType}/${entityIdentifier}`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetNotificationsEntityEntityTypeEntityIdentifierQueryOptions = <
+    TData = Awaited<ReturnType<typeof getNotificationsEntityEntityTypeEntityIdentifier>>,
+    TError = BadRequestResponse | InternalServerErrorResponse,
+>(
+    { entityType, entityIdentifier }: GetNotificationsEntityEntityTypeEntityIdentifierPathParameters,
+    params?: GetNotificationsEntityEntityTypeEntityIdentifierParams,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof getNotificationsEntityEntityTypeEntityIdentifier>>, TError, TData>
+        >;
+    },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey =
+        queryOptions?.queryKey ??
+        getGetNotificationsEntityEntityTypeEntityIdentifierQueryKey({ entityType, entityIdentifier }, params);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getNotificationsEntityEntityTypeEntityIdentifier>>> = ({
+        signal,
+    }) => getNotificationsEntityEntityTypeEntityIdentifier({ entityType, entityIdentifier }, params, signal);
+
+    return { queryKey, queryFn, enabled: !!(entityType && entityIdentifier), ...queryOptions } as UseQueryOptions<
+        Awaited<ReturnType<typeof getNotificationsEntityEntityTypeEntityIdentifier>>,
+        TError,
+        TData
+    > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetNotificationsEntityEntityTypeEntityIdentifierQueryResult = NonNullable<
+    Awaited<ReturnType<typeof getNotificationsEntityEntityTypeEntityIdentifier>>
+>;
+export type GetNotificationsEntityEntityTypeEntityIdentifierQueryError =
+    | BadRequestResponse
+    | InternalServerErrorResponse;
+
+export function useGetNotificationsEntityEntityTypeEntityIdentifier<
+    TData = Awaited<ReturnType<typeof getNotificationsEntityEntityTypeEntityIdentifier>>,
+    TError = BadRequestResponse | InternalServerErrorResponse,
+>(
+    pathParams: GetNotificationsEntityEntityTypeEntityIdentifierPathParameters,
+    params: undefined | GetNotificationsEntityEntityTypeEntityIdentifierParams,
+    options: {
+        query: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof getNotificationsEntityEntityTypeEntityIdentifier>>, TError, TData>
+        > &
+            Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof getNotificationsEntityEntityTypeEntityIdentifier>>,
+                    TError,
+                    Awaited<ReturnType<typeof getNotificationsEntityEntityTypeEntityIdentifier>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetNotificationsEntityEntityTypeEntityIdentifier<
+    TData = Awaited<ReturnType<typeof getNotificationsEntityEntityTypeEntityIdentifier>>,
+    TError = BadRequestResponse | InternalServerErrorResponse,
+>(
+    pathParams: GetNotificationsEntityEntityTypeEntityIdentifierPathParameters,
+    params?: GetNotificationsEntityEntityTypeEntityIdentifierParams,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof getNotificationsEntityEntityTypeEntityIdentifier>>, TError, TData>
+        > &
+            Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof getNotificationsEntityEntityTypeEntityIdentifier>>,
+                    TError,
+                    Awaited<ReturnType<typeof getNotificationsEntityEntityTypeEntityIdentifier>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetNotificationsEntityEntityTypeEntityIdentifier<
+    TData = Awaited<ReturnType<typeof getNotificationsEntityEntityTypeEntityIdentifier>>,
+    TError = BadRequestResponse | InternalServerErrorResponse,
+>(
+    pathParams: GetNotificationsEntityEntityTypeEntityIdentifierPathParameters,
+    params?: GetNotificationsEntityEntityTypeEntityIdentifierParams,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof getNotificationsEntityEntityTypeEntityIdentifier>>, TError, TData>
+        >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get notifications by entity
+ */
+
+export function useGetNotificationsEntityEntityTypeEntityIdentifier<
+    TData = Awaited<ReturnType<typeof getNotificationsEntityEntityTypeEntityIdentifier>>,
+    TError = BadRequestResponse | InternalServerErrorResponse,
+>(
+    { entityType, entityIdentifier }: GetNotificationsEntityEntityTypeEntityIdentifierPathParameters,
+    params?: GetNotificationsEntityEntityTypeEntityIdentifierParams,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof getNotificationsEntityEntityTypeEntityIdentifier>>, TError, TData>
+        >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getGetNotificationsEntityEntityTypeEntityIdentifierQueryOptions(
+        { entityType, entityIdentifier },
+        params,
+        options,
+    );
+
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+
+    query.queryKey = queryOptions.queryKey;
+
+    return query;
+}
+
+/**
+ * Mark specific notifications as read
+ * @summary Mark notifications as read
+ */
+export const putNotificationsMarkRead = (markAsReadRequest: MarkAsReadRequest) => {
+    return fetcher<PutNotificationsMarkRead200>({
+        url: `/notifications/mark-read`,
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        data: markAsReadRequest,
+    });
+};
+
+export const getPutNotificationsMarkReadMutationOptions = <
+    TError = BadRequestResponse | InternalServerErrorResponse,
+    TContext = unknown,
+>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof putNotificationsMarkRead>>,
+        TError,
+        { data: MarkAsReadRequest },
+        TContext
+    >;
+}): UseMutationOptions<
+    Awaited<ReturnType<typeof putNotificationsMarkRead>>,
+    TError,
+    { data: MarkAsReadRequest },
+    TContext
+> => {
+    const mutationKey = ['putNotificationsMarkRead'];
+    const { mutation: mutationOptions } = options
+        ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
+            ? options
+            : { ...options, mutation: { ...options.mutation, mutationKey } }
+        : { mutation: { mutationKey } };
+
+    const mutationFn: MutationFunction<
+        Awaited<ReturnType<typeof putNotificationsMarkRead>>,
+        { data: MarkAsReadRequest }
+    > = props => {
+        const { data } = props ?? {};
+
+        return putNotificationsMarkRead(data);
+    };
+
+    return { mutationFn, ...mutationOptions };
+};
+
+export type PutNotificationsMarkReadMutationResult = NonNullable<Awaited<ReturnType<typeof putNotificationsMarkRead>>>;
+export type PutNotificationsMarkReadMutationBody = MarkAsReadRequest;
+export type PutNotificationsMarkReadMutationError = BadRequestResponse | InternalServerErrorResponse;
+
+/**
+ * @summary Mark notifications as read
+ */
+export const usePutNotificationsMarkRead = <
+    TError = BadRequestResponse | InternalServerErrorResponse,
+    TContext = unknown,
+>(
+    options?: {
+        mutation?: UseMutationOptions<
+            Awaited<ReturnType<typeof putNotificationsMarkRead>>,
+            TError,
+            { data: MarkAsReadRequest },
+            TContext
+        >;
+    },
+    queryClient?: QueryClient,
+): UseMutationResult<
+    Awaited<ReturnType<typeof putNotificationsMarkRead>>,
+    TError,
+    { data: MarkAsReadRequest },
+    TContext
+> => {
+    const mutationOptions = getPutNotificationsMarkReadMutationOptions(options);
+
+    return useMutation(mutationOptions, queryClient);
+};
+
+/**
+ * Mark all notifications as read with optional filtering
+ * @summary Mark all notifications as read
+ */
+export const putNotificationsMarkAllRead = (markAllAsReadRequest: MarkAllAsReadRequest) => {
+    return fetcher<PutNotificationsMarkAllRead200>({
+        url: `/notifications/mark-all-read`,
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        data: markAllAsReadRequest,
+    });
+};
+
+export const getPutNotificationsMarkAllReadMutationOptions = <
+    TError = BadRequestResponse | InternalServerErrorResponse,
+    TContext = unknown,
+>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof putNotificationsMarkAllRead>>,
+        TError,
+        { data: MarkAllAsReadRequest },
+        TContext
+    >;
+}): UseMutationOptions<
+    Awaited<ReturnType<typeof putNotificationsMarkAllRead>>,
+    TError,
+    { data: MarkAllAsReadRequest },
+    TContext
+> => {
+    const mutationKey = ['putNotificationsMarkAllRead'];
+    const { mutation: mutationOptions } = options
+        ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
+            ? options
+            : { ...options, mutation: { ...options.mutation, mutationKey } }
+        : { mutation: { mutationKey } };
+
+    const mutationFn: MutationFunction<
+        Awaited<ReturnType<typeof putNotificationsMarkAllRead>>,
+        { data: MarkAllAsReadRequest }
+    > = props => {
+        const { data } = props ?? {};
+
+        return putNotificationsMarkAllRead(data);
+    };
+
+    return { mutationFn, ...mutationOptions };
+};
+
+export type PutNotificationsMarkAllReadMutationResult = NonNullable<
+    Awaited<ReturnType<typeof putNotificationsMarkAllRead>>
+>;
+export type PutNotificationsMarkAllReadMutationBody = MarkAllAsReadRequest;
+export type PutNotificationsMarkAllReadMutationError = BadRequestResponse | InternalServerErrorResponse;
+
+/**
+ * @summary Mark all notifications as read
+ */
+export const usePutNotificationsMarkAllRead = <
+    TError = BadRequestResponse | InternalServerErrorResponse,
+    TContext = unknown,
+>(
+    options?: {
+        mutation?: UseMutationOptions<
+            Awaited<ReturnType<typeof putNotificationsMarkAllRead>>,
+            TError,
+            { data: MarkAllAsReadRequest },
+            TContext
+        >;
+    },
+    queryClient?: QueryClient,
+): UseMutationResult<
+    Awaited<ReturnType<typeof putNotificationsMarkAllRead>>,
+    TError,
+    { data: MarkAllAsReadRequest },
+    TContext
+> => {
+    const mutationOptions = getPutNotificationsMarkAllReadMutationOptions(options);
+
+    return useMutation(mutationOptions, queryClient);
+};

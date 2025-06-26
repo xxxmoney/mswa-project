@@ -15,6 +15,7 @@ const { notFound } = require('./middleware/notFound');
 const authRoutes = require('./routes/auth');
 const countryRoutes = require('./routes/countries');
 const currencyRoutes = require('./routes/currencies');
+const notificationRoutes = require('./routes/notifications');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -67,6 +68,7 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/countries', countryRoutes);
 app.use('/api/currencies', currencyRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // API documentation
 app.get('/api', (req, res) => {
@@ -76,7 +78,8 @@ app.get('/api', (req, res) => {
     endpoints: {
       auth: '/api/auth',
       countries: '/api/countries',
-      currencies: '/api/currencies'
+      currencies: '/api/currencies',
+      notifications: '/api/notifications'
     }
   });
 });
