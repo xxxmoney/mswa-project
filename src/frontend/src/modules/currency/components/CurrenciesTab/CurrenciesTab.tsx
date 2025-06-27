@@ -1,4 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { AdminComponent } from '@/modules/auth/components';
 
 import { AddCurrencyDialog } from '../AddCurrencyDialog';
 import { CurrenciesTable } from '../CurrenciesTable';
@@ -14,7 +15,9 @@ export const CurrenciesTab = () => (
                     </CardDescription>
                 </div>
                 <div className='flex items-center gap-4'>
-                    <AddCurrencyDialog />
+                    <AdminComponent>
+                        <AddCurrencyDialog />
+                    </AdminComponent>
                 </div>
             </div>
         </CardHeader>

@@ -1,5 +1,5 @@
 import { LogOut } from 'lucide-react';
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -38,7 +38,10 @@ export const UserAvatar = () => {
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className='bg-slate-700' />
-                <DropdownMenuItem className='text-slate-200 hover:bg-slate-700 hover:text-slate-200 focus:bg-slate-700'>
+                <DropdownMenuItem
+                    className='text-slate-200 hover:bg-slate-700 hover:text-slate-200 focus:bg-slate-700'
+                    onClick={() => signOut()}
+                >
                     <LogOut className='mr-2 h-4 w-4' />
                     <span>Log out</span>
                 </DropdownMenuItem>

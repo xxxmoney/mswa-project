@@ -18,13 +18,13 @@ export const DashboardTabs = () => {
     return (
         <Tabs value={activeTab} onValueChange={handleTabChange} className='space-y-6'>
             <TabsList className='bg-slate-800/90 border-slate-700'>
-                <TabsTrigger value='currencies' className='data-[state=active]:bg-blue-600'>
+                <TabsTrigger value='currencies' className='data-[state=active]:bg-blue-600 hover:bg-blue-600/20'>
                     Currencies
                 </TabsTrigger>
-                <TabsTrigger value='countries' className='data-[state=active]:bg-blue-600'>
+                <TabsTrigger value='countries' className='data-[state=active]:bg-blue-600 hover:bg-blue-600/20'>
                     Countries
                 </TabsTrigger>
-                <TabsTrigger value='notifications' className='data-[state=active]:bg-blue-600'>
+                <TabsTrigger value='notifications' className='data-[state=active]:bg-blue-600 hover:bg-blue-600/20'>
                     Change Notifications
                 </TabsTrigger>
             </TabsList>

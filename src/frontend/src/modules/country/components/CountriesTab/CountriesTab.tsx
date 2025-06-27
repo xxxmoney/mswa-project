@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 import { AddCountryDialog } from '../AddCountryDialog';
 import { CountriesTable } from '../CountriesTable';
+import { AdminComponent } from '@/modules/auth/components';
 
 export const CountriesTab = () => {
     return (
@@ -15,7 +16,9 @@ export const CountriesTab = () => {
                         </CardDescription>
                     </div>
                     <div className='flex items-center gap-4'>
-                        <AddCountryDialog />
+                        <AdminComponent>
+                            <AddCountryDialog />
+                        </AdminComponent>
                     </div>
                 </div>
             </CardHeader>

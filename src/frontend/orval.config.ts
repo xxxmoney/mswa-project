@@ -19,6 +19,7 @@ const config = defineConfig({
             clean: true,
             tsconfig: './tsconfig.json',
             packageJson: './package.json',
+            indexFiles: true,
             override: {
                 useBigInt: true,
                 useNamedParameters: true,

@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { GetServerSideProps } from 'next';
-import { getSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
@@ -186,20 +184,20 @@ export default function SignupPage() {
     );
 }
 
-export const getServerSideProps: GetServerSideProps = async context => {
-    const session = await getSession(context);
+// export const getServerSideProps: GetServerSideProps = async context => {
+//     const session = await getSession(context);
 
-    // If user is already logged in, redirect to home page
-    if (session) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        };
-    }
+//     // If user is already logged in, redirect to home page
+//     if (session) {
+//         return {
+//             redirect: {
+//                 destination: '/',
+//                 permanent: false,
+//             },
+//         };
+//     }
 
-    return {
-        props: {},
-    };
-};
+//     return {
+//         props: {},
+//     };
+// };

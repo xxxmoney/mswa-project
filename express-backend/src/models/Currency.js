@@ -59,18 +59,29 @@ currencySchema.statics.getCurrent = function(isoCode) {
 };
 
 currencySchema.statics.getByIsoCode = async function(isoCode) {
-  return this.findOne({ isoCode, validTo: null });
+  return this.findOne({ isoCode });
 };
 
 // Static method to list current currencies
-currencySchema.statics.listCurrent = function(pageInfo = {}) {
+currencySchema.statics.listCurrent = async function(pageInfo = {}) {
   const { pageIndex = 0, pageSize = 50 } = pageInfo;
   const skip = pageIndex * pageSize;
   
-  return this.find({ validTo: null })
-    .sort({ name: 1 })
+  const currencies = await this.find()
+    .sort({ validTo: -1 })
     .skip(skip)
     .limit(pageSize);
+
+  const currenciesByIsoCode = currencies.reduce((acc, currency) => {
+    if (acc[currency.isoCode]) {
+      return acc;
+    }
+
+    acc[currency.isoCode] = currency;
+    return acc;
+  }, {});
+
+  return Object.values(currenciesByIsoCode);
 };
 
 // Static method to get history of a currency
@@ -126,7 +137,7 @@ currencySchema.statics.archiveCurrency = async function(isoCode) {
   if (!updatedDocument) {
     // If no current version found, return the most recent archived version
     const findResult = await this.find(
-      { isoCode, validTo: { $ne: null } },
+      { isoCode },
       null,
       { sort: { validTo: -1 }, limit: 1 }
     );

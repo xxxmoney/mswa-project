@@ -5,14 +5,16 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatDate } from '@/lib/utils';
-import { useGetCountries } from '@/modules/api/codegen';
+import { useDeleteCountriesIsoCode, useGetCountries } from '@/modules/api/codegen';
 import { QueryLoader } from '@/modules/api/components';
 import { CurrencyLink } from '@/modules/currency/components';
+import { RemoveEntityButton } from '@/modules/dashboard/components';
 
 export const CountriesTable = () => {
     const query = useGetCountries();
 
     const router = useRouter();
+    const archiveCountry = useDeleteCountriesIsoCode();
 
     return (
         // @ts-expect-error QueryLoader is not typed correctly
@@ -27,7 +29,6 @@ export const CountriesTable = () => {
                             <TableHead className='text-slate-300'>Version</TableHead>
                             <TableHead className='text-slate-300'>Valid Period</TableHead>
                             <TableHead className='text-slate-300'>Status</TableHead>
-                            <TableHead className='text-slate-300'>Changes</TableHead>
                         </TableRow>
                     </TableHeader>
 
@@ -54,15 +55,21 @@ export const CountriesTable = () => {
                                     </Badge>
                                 </TableCell>
                                 <TableCell>
-                                    <div className='flex items-center gap-2'>
+                                    <div className='items-center grid grid-cols-2 w-[80px] ml-auto'>
                                         <Button
                                             size='sm'
                                             variant='ghost'
-                                            className='text-slate-400 hover:text-white'
+                                            className='text-slate-400'
                                             onClick={() => router.push(`/countries/${country.isoCode}/history`)}
                                         >
                                             <History className='w-4 h-4' />
                                         </Button>
+                                        <RemoveEntityButton
+                                            onSuccess={() => {
+                                                archiveCountry.mutate({ pathParams: { isoCode: country.isoCode } });
+                                            }}
+                                            isPending={archiveCountry.isPending}
+                                        />
                                     </div>
                                 </TableCell>
                             </TableRow>

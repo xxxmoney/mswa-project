@@ -1,8 +1,10 @@
-import { useGetCurrencies } from '@/modules/api/codegen';
-import { QueryLoader } from '@/modules/api/components';
 import { formatDate } from 'date-fns';
 import { History } from 'lucide-react';
 import { useRouter } from 'next/router';
+
+import { useDeleteCurrenciesIsoCode, useGetCurrencies } from '@/modules/api/codegen';
+import { QueryLoader } from '@/modules/api/components';
+import { RemoveEntityButton } from '@/modules/dashboard/components';
 
 import { Badge } from '../../../../components/ui/badge';
 import { Button } from '../../../../components/ui/button';
@@ -12,6 +14,7 @@ export const CurrenciesTable = () => {
     const query = useGetCurrencies();
 
     const router = useRouter();
+    const archiveCurrency = useDeleteCurrenciesIsoCode();
 
     return (
         // @ts-expect-error QueryLoader is not typed correctly
@@ -41,9 +44,9 @@ export const CurrenciesTable = () => {
                                     </Badge>
                                 </TableCell>
                                 <TableCell className='text-slate-300 text-sm'>
-                                    {formatDate(new Date(currency.validFrom), 'dd.MM.yyyy')} -{' '}
+                                    {formatDate(new Date(currency.validFrom), 'dd.MM.yyyy HH:mm')} -{' '}
                                     {currency.validTo
-                                        ? formatDate(new Date(currency.validTo), 'dd.MM.yyyy')
+                                        ? formatDate(new Date(currency.validTo), 'dd.MM.yyyy HH:mm')
                                         : 'Present'}
                                 </TableCell>
                                 <TableCell>
@@ -52,15 +55,25 @@ export const CurrenciesTable = () => {
                                     </Badge>
                                 </TableCell>
                                 <TableCell>
-                                    <div className='flex items-center gap-2'>
+                                    <div className='items-center grid grid-cols-2 w-[80px] ml-auto'>
                                         <Button
                                             size='sm'
                                             variant='ghost'
-                                            className='text-slate-400 hover:text-white'
+                                            className='text-slate-400'
                                             onClick={() => router.push(`/currencies/${currency.isoCode}/history`)}
                                         >
                                             <History className='w-4 h-4' />
                                         </Button>
+                                        {currency.isCurrent && (
+                                            <RemoveEntityButton
+                                                onSuccess={() => {
+                                                    archiveCurrency.mutate({
+                                                        pathParams: { isoCode: currency.isoCode },
+                                                    });
+                                                }}
+                                                isPending={archiveCurrency.isPending}
+                                            />
+                                        )}
                                     </div>
                                 </TableCell>
                             </TableRow>

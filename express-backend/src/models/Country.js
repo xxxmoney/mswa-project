@@ -62,14 +62,25 @@ countrySchema.statics.getCurrent = function(isoCode) {
 };
 
 // Static method to list current countries
-countrySchema.statics.listCurrent = function(pageInfo = {}) {
+countrySchema.statics.listCurrent = async function(pageInfo = {}) {
   const { pageIndex = 0, pageSize = 50 } = pageInfo;
   const skip = pageIndex * pageSize;
   
-  return this.find({ validTo: null })
-    .sort({ name: 1 })
+  const countries = await this.find()
+    .sort({ validTo: -1 })
     .skip(skip)
     .limit(pageSize);
+
+    const countriesByIsoCode = countries.reduce((acc, country) => {
+      if (acc[country.isoCode]) {
+        return acc;
+      }
+  
+      acc[country.isoCode] = country;
+      return acc;
+    }, {});
+  
+    return Object.values(countriesByIsoCode);
 };
 
 // Static method to get history of a country

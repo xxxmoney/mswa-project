@@ -263,8 +263,6 @@ const countryController = {
       const enrichedList = await Promise.all(countryList.map(async (country) => {
         const countryData = country.toObject();
 
-        console.log(countryData);
-
         return {
           ...countryData,
           currency: countryData.currencyIsoCode ? await Currency.getByIsoCode(countryData.currencyIsoCode) : undefined

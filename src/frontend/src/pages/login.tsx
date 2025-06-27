@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { GetServerSideProps } from 'next';
-import { getSession, signIn } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
@@ -31,8 +30,8 @@ export default function LoginPage() {
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
-            email: 'admin@example.com',
-            password: 'password',
+            email: 'admin@admin.com',
+            password: 'AdminPassword123',
         },
     });
 
@@ -104,12 +103,6 @@ export default function LoginPage() {
                                 <Label htmlFor='password' className='text-slate-200'>
                                     Password
                                 </Label>
-                                <Link
-                                    href='/forgot-password'
-                                    className='text-sm text-blue-400 hover:text-blue-300 hover:underline transition-colors'
-                                >
-                                    Forgot password?
-                                </Link>
                             </div>
                             <Input
                                 id='password'
@@ -149,20 +142,20 @@ export default function LoginPage() {
     );
 }
 
-export const getServerSideProps: GetServerSideProps = async context => {
-    const session = await getSession(context);
+// export const getServerSideProps: GetServerSideProps = async context => {
+//     const session = await getSession(context);
 
-    // If user is already logged in, redirect to home page
-    if (session) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        };
-    }
+//     // If user is already logged in, redirect to home page
+//     if (session) {
+//         return {
+//             redirect: {
+//                 destination: '/',
+//                 permanent: false,
+//             },
+//         };
+//     }
 
-    return {
-        props: {},
-    };
-};
+//     return {
+//         props: {},
+//     };
+// };
