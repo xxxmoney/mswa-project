@@ -17,5 +17,6 @@ router.delete('/:isoCode', countryController.archive);
 router.get('/', countryController.listCurrent);
 router.get('/:isoCode/history', countryController.getHistory);
 router.get('/currency/:currencyIsoCode', countryController.listByCurrency);
+router.delete('/:isoCode/delete', countryController.removeCountry);
 
 module.exports = router; 

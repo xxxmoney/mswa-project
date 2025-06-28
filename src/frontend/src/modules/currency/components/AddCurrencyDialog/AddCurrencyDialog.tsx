@@ -42,7 +42,7 @@ export const AddCurrencyDialog = () => {
             return postCurrencies(data);
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries();
+            await queryClient.invalidateQueries({ queryKey: getGetCurrenciesQueryKey() });
             setIsCreateModalOpen(false);
             reset();
         },
@@ -114,6 +114,17 @@ export const AddCurrencyDialog = () => {
                                 className='bg-slate-700/50 border-slate-600 text-white'
                             />
                         </div>
+
+                        {mutation.isError && (
+                            <div className='col-span-2'>
+                                <div className='flex items-center justify-between'>
+                                    <p className='text-red-500 text-sm'>
+                                        {/* @ts-expect-error Invalid type */}
+                                        {mutation.error.data?.error || mutation.error.error}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <DialogFooter>

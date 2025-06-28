@@ -22,7 +22,7 @@ const currencyController = {
       const { isoCode, name, symbol, validFrom, validTo } = req.body;
 
       // Check if currency with this isoCode already exists (as an active one)
-      const existingCurrency = await Currency.getByIsoCode(isoCode);
+      const existingCurrency = await Currency.getActiveByIsoCode(isoCode);
       if (existingCurrency) {
         return res.status(409).json({
           success: false,
