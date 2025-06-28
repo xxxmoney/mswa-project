@@ -29,7 +29,7 @@ A RESTful API for managing reference data (countries and currencies) with tempor
 
 3. Copy environment file:
    ```bash
-   cp env.example .env
+   cp env.local.example .env
    ```
 
 4. Configure environment variables in `.env`:

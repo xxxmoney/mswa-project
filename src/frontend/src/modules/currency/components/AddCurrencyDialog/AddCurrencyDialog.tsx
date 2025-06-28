@@ -41,9 +41,10 @@ export const AddCurrencyDialog = () => {
         mutationFn: (data: CreateCurrencySchema) => {
             return postCurrencies(data);
         },
-        onSuccess: () => {
+        onSuccess: async () => {
+            await queryClient.invalidateQueries();
             setIsCreateModalOpen(false);
-            queryClient.invalidateQueries({ queryKey: [getGetCurrenciesQueryKey()] });
+            reset();
         },
     });
 
