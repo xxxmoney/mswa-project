@@ -44,8 +44,7 @@ export const AddCountryDialog = () => {
     const mutation = usePostCountries({
         mutation: {
             onSuccess: async () => {
-                await queryClient.invalidateQueries({ queryKey: [getGetCountriesQueryKey()] });
-
+                await queryClient.invalidateQueries();
                 setIsCreateModalOpen(false);
                 reset();
             },
@@ -115,7 +114,7 @@ export const AddCountryDialog = () => {
                                 <div className='col-span-2'>
                                     <div className='flex items-center justify-between'>
                                         <p className='text-red-500 text-sm'>
-                                            An error occurred while creating the country: {mutation.error.message}
+                                            An error occurred while creating the country: {mutation.error.error}
                                         </p>
                                     </div>
                                 </div>
