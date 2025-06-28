@@ -19,7 +19,7 @@
 
 ```Bash
 cd src/backend
-npm install
+yarn install
 ```
 
  - Create a .env file in the src/backend directory and add the following environment variables:
@@ -41,7 +41,7 @@ npm run dev
 
 ```Bash
 cd src/frontend
-npm install
+yarn install
 ```
 
  - Create a .env.local file in the src/frontend directory and add the following:
