@@ -1,0 +1,1852 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "MSWA Project API",
+        "description": "API for managing currencies and countries with versioning support",
+        "version": "1.0.0",
+        "contact": {
+            "name": "MSWA Project Team"
+        }
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000",
+            "description": "Development server"
+        },
+        {
+            "url": "https://api.mswa-project.com",
+            "description": "Production server"
+        }
+    ],
+    "paths": {
+        "/currencies": {
+            "get": {
+                "summary": "List current currencies",
+                "description": "Retrieve a paginated list of all current (active) currencies",
+                "tags": ["Currencies"],
+                "parameters": [
+                    {
+                        "name": "pageIndex",
+                        "in": "query",
+                        "description": "Page index (0-based)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "default": 0
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 100,
+                            "default": 50
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "itemList": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Currency"
+                                                    }
+                                                },
+                                                "pageInfo": {
+                                                    "$ref": "#/components/schemas/PageInfo"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerError"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new currency",
+                "description": "Create a new currency with the specified details",
+                "tags": ["Currencies"],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateCurrencyRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Currency created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Currency"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "409": {
+                        "description": "Currency with this ISO code already exists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerError"
+                    }
+                }
+            }
+        },
+        "/currencies/{isoCode}": {
+            "get": {
+                "summary": "Get currency by ISO code",
+                "description": "Retrieve the current version of a currency by its ISO code",
+                "tags": ["Currencies"],
+                "parameters": [
+                    {
+                        "name": "isoCode",
+                        "in": "path",
+                        "required": true,
+                        "description": "3-letter ISO currency code",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[A-Z]{3}$",
+                            "example": "USD"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Currency"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Currency not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerError"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update currency",
+                "description": "Update a currency (creates new version)",
+                "tags": ["Currencies"],
+                "parameters": [
+                    {
+                        "name": "isoCode",
+                        "in": "path",
+                        "required": true,
+                        "description": "3-letter ISO currency code",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[A-Z]{3}$",
+                            "example": "USD"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateCurrencyRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Currency updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Currency"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Currency not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerError"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Archive currency",
+                "description": "Archive a currency (marks as inactive)",
+                "tags": ["Currencies"],
+                "parameters": [
+                    {
+                        "name": "isoCode",
+                        "in": "path",
+                        "required": true,
+                        "description": "3-letter ISO currency code",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[A-Z]{3}$",
+                            "example": "USD"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Currency archived successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Currency"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Currency not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerError"
+                    }
+                }
+            }
+        },
+        "/currencies/{isoCode}/history": {
+            "get": {
+                "summary": "Get currency history",
+                "description": "Retrieve the version history of a currency",
+                "tags": ["Currencies"],
+                "parameters": [
+                    {
+                        "name": "isoCode",
+                        "in": "path",
+                        "required": true,
+                        "description": "3-letter ISO currency code",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[A-Z]{3}$",
+                            "example": "USD"
+                        }
+                    },
+                    {
+                        "name": "pageIndex",
+                        "in": "query",
+                        "description": "Page index (0-based)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "default": 0
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 100,
+                            "default": 50
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "country": {
+                                                    "$ref": "#/components/schemas/Country",
+                                                    "nullable": true
+                                                },
+                                                "itemList": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Currency"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Currency not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerError"
+                    }
+                }
+            }
+        },
+        "/countries": {
+            "get": {
+                "summary": "List current countries",
+                "description": "Retrieve a paginated list of all current (active) countries",
+                "tags": ["Countries"],
+                "parameters": [
+                    {
+                        "name": "pageIndex",
+                        "in": "query",
+                        "description": "Page index (0-based)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "default": 0
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 100,
+                            "default": 50
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "itemList": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/CountryWithCurrencyName"
+                                                    }
+                                                },
+                                                "pageInfo": {
+                                                    "$ref": "#/components/schemas/PageInfo"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerError"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new country",
+                "description": "Create a new country with the specified details",
+                "tags": ["Countries"],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateCountryRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Country created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/CountryWithCurrencyName"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Linked currency not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Country with this ISO code already exists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerError"
+                    }
+                }
+            }
+        },
+        "/countries/{isoCode}": {
+            "get": {
+                "summary": "Get country by ISO code",
+                "description": "Retrieve the current version of a country by its ISO code",
+                "tags": ["Countries"],
+                "parameters": [
+                    {
+                        "name": "isoCode",
+                        "in": "path",
+                        "required": true,
+                        "description": "2-letter ISO country code",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[A-Z]{2}$",
+                            "example": "US"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/CountryWithCurrency"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Country not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerError"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update country",
+                "description": "Update a country (creates new version)",
+                "tags": ["Countries"],
+                "parameters": [
+                    {
+                        "name": "isoCode",
+                        "in": "path",
+                        "required": true,
+                        "description": "2-letter ISO country code",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[A-Z]{2}$",
+                            "example": "US"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateCountryRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Country updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/CountryWithCurrencyName"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Country not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerError"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Archive country",
+                "description": "Archive a country (marks as inactive)",
+                "tags": ["Countries"],
+                "parameters": [
+                    {
+                        "name": "isoCode",
+                        "in": "path",
+                        "required": true,
+                        "description": "2-letter ISO country code",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[A-Z]{2}$",
+                            "example": "US"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Country archived successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/CountryWithCurrencyName"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Country not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerError"
+                    }
+                }
+            }
+        },
+        "/countries/{isoCode}/history": {
+            "get": {
+                "summary": "Get country history",
+                "description": "Retrieve the version history of a country",
+                "tags": ["Countries"],
+                "parameters": [
+                    {
+                        "name": "isoCode",
+                        "in": "path",
+                        "required": true,
+                        "description": "2-letter ISO country code",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[A-Z]{2}$",
+                            "example": "US"
+                        }
+                    },
+                    {
+                        "name": "pageIndex",
+                        "in": "query",
+                        "description": "Page index (0-based)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "default": 0
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 100,
+                            "default": 50
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "itemList": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/CountryWithCurrencyName"
+                                                    }
+                                                },
+                                                "pageInfo": {
+                                                    "$ref": "#/components/schemas/PageInfo"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Country not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerError"
+                    }
+                }
+            }
+        },
+        "/countries/currency/{currencyIsoCode}": {
+            "get": {
+                "summary": "List countries by currency",
+                "description": "Retrieve a paginated list of countries that use a specific currency",
+                "tags": ["Countries"],
+                "parameters": [
+                    {
+                        "name": "currencyIsoCode",
+                        "in": "path",
+                        "required": true,
+                        "description": "3-letter ISO currency code",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[A-Z]{3}$",
+                            "example": "USD"
+                        }
+                    },
+                    {
+                        "name": "pageIndex",
+                        "in": "query",
+                        "description": "Page index (0-based)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "default": 0
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 100,
+                            "default": 50
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "itemList": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/CountryWithCurrencyName"
+                                                    }
+                                                },
+                                                "pageInfo": {
+                                                    "$ref": "#/components/schemas/PageInfo"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Currency not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerError"
+                    }
+                }
+            }
+        },
+        "/notifications": {
+            "get": {
+                "summary": "Get all notifications",
+                "description": "Retrieve a paginated list of notifications with optional filtering",
+                "tags": ["Notifications"],
+                "parameters": [
+                    {
+                        "name": "pageIndex",
+                        "in": "query",
+                        "description": "Page index (0-based)",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "default": 0
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 100,
+                            "default": 50
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Filter by notification type",
+                        "schema": {
+                            "type": "string",
+                            "enum": ["CREATE", "UPDATE", "ARCHIVE"]
+                        }
+                    },
+                    {
+                        "name": "entityType",
+                        "in": "query",
+                        "description": "Filter by entity type",
+                        "schema": {
+                            "type": "string",
+                            "enum": ["Country", "Currency"]
+                        }
+                    },
+                    {
+                        "name": "isRead",
+                        "in": "query",
+                        "description": "Filter by read status",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "notifications": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Notification"
+                                                    }
+                                                },
+                                                "pagination": {
+                                                    "$ref": "#/components/schemas/NotificationPagination"
+                                                },
+                                                "unreadCount": {
+                                                    "type": "integer",
+                                                    "description": "Total number of unread notifications",
+                                                    "example": 25
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerError"
+                    }
+                }
+            }
+        },
+        "/notifications/unread-count": {
+            "get": {
+                "summary": "Get unread notifications count",
+                "description": "Get the count of unread notifications with optional filtering",
+                "tags": ["Notifications"],
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Filter by notification type",
+                        "schema": {
+                            "type": "string",
+                            "enum": ["CREATE", "UPDATE", "ARCHIVE"]
+                        }
+                    },
+                    {
+                        "name": "entityType",
+                        "in": "query",
+                        "description": "Filter by entity type",
+                        "schema": {
+                            "type": "string",
+                            "enum": ["Country", "Currency"]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "unreadCount": {
+                                                    "type": "integer",
+                                                    "description": "Number of unread notifications",
+                                                    "example": 25
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerError"
+                    }
+                }
+            }
+        },
+        "/notifications/{id}": {
+            "get": {
+                "summary": "Get notification by ID",
+                "description": "Retrieve a specific notification by its ID",
+                "tags": ["Notifications"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "Notification UUID",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Notification"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Notification not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerError"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete notification",
+                "description": "Delete a specific notification by its ID",
+                "tags": ["Notifications"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "Notification UUID",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Notification deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Notification deleted successfully"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Notification not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerError"
+                    }
+                }
+            }
+        },
+        "/notifications/entity/{entityType}/{entityIdentifier}": {
+            "get": {
+                "summary": "Get notifications by entity",
+                "description": "Retrieve notifications for a specific entity",
+                "tags": ["Notifications"],
+                "parameters": [
+                    {
+                        "name": "entityType",
+                        "in": "path",
+                        "required": true,
+                        "description": "Type of entity",
+                        "schema": {
+                            "type": "string",
+                            "enum": ["Country", "Currency"]
+                        }
+                    },
+                    {
+                        "name": "entityIdentifier",
+                        "in": "path",
+                        "required": true,
+                        "description": "Entity identifier (e.g., ISO code)",
+                        "schema": {
+                            "type": "string",
+                            "example": "US"
+                        }
+                    },
+                    {
+                        "name": "pageIndex",
+                        "in": "query",
+                        "description": "Page index (0-based)",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "default": 0
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 100,
+                            "default": 50
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "notifications": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Notification"
+                                                    }
+                                                },
+                                                "pagination": {
+                                                    "$ref": "#/components/schemas/NotificationPagination"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerError"
+                    }
+                }
+            }
+        },
+        "/notifications/mark-read": {
+            "put": {
+                "summary": "Mark notifications as read",
+                "description": "Mark specific notifications as read",
+                "tags": ["Notifications"],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MarkAsReadRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Notifications marked as read successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Marked 3 notifications as read"
+                                                },
+                                                "modifiedCount": {
+                                                    "type": "integer",
+                                                    "description": "Number of notifications marked as read",
+                                                    "example": 3
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerError"
+                    }
+                }
+            }
+        },
+        "/notifications/mark-all-read": {
+            "put": {
+                "summary": "Mark all notifications as read",
+                "description": "Mark all notifications as read with optional filtering",
+                "tags": ["Notifications"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MarkAllAsReadRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "All notifications marked as read successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Marked 25 notifications as read"
+                                                },
+                                                "modifiedCount": {
+                                                    "type": "integer",
+                                                    "description": "Number of notifications marked as read",
+                                                    "example": 25
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerError"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Currency": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Unique identifier for the currency"
+                    },
+                    "isoCode": {
+                        "type": "string",
+                        "pattern": "^[A-Z]{3}$",
+                        "description": "3-letter ISO currency code",
+                        "example": "USD"
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "description": "Currency name",
+                        "example": "US Dollar"
+                    },
+                    "symbol": {
+                        "type": "string",
+                        "maxLength": 10,
+                        "description": "Currency symbol",
+                        "example": "$"
+                    },
+                    "version": {
+                        "type": "integer",
+                        "description": "Version number",
+                        "example": 1
+                    },
+                    "isCurrent": {
+                        "type": "boolean",
+                        "description": "Whether this is the current active version",
+                        "example": true
+                    },
+                    "validFrom": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date from which this version is valid"
+                    },
+                    "validTo": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true,
+                        "description": "Date until which this version is valid (null if currently active)"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Creation timestamp"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Last update timestamp"
+                    }
+                },
+                "required": ["id", "isoCode", "name", "version", "isCurrent", "validFrom", "createdAt", "updatedAt"]
+            },
+            "Country": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Unique identifier for the country"
+                    },
+                    "isoCode": {
+                        "type": "string",
+                        "pattern": "^[A-Z]{2}$",
+                        "description": "2-letter ISO country code",
+                        "example": "US"
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "description": "Country name",
+                        "example": "United States"
+                    },
+                    "currencyIsoCode": {
+                        "type": "string",
+                        "pattern": "^[A-Z]{3}$",
+                        "description": "ISO code of the currency used by this country",
+                        "example": "USD"
+                    },
+                    "version": {
+                        "type": "integer",
+                        "description": "Version number",
+                        "example": 1
+                    },
+                    "isCurrent": {
+                        "type": "boolean",
+                        "description": "Whether this is the current active version",
+                        "example": true
+                    },
+                    "validFrom": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date from which this version is valid"
+                    },
+                    "validTo": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true,
+                        "description": "Date until which this version is valid (null if currently active)"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Creation timestamp"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Last update timestamp"
+                    }
+                },
+                "required": [
+                    "id",
+                    "isoCode",
+                    "name",
+                    "currencyIsoCode",
+                    "version",
+                    "isCurrent",
+                    "validFrom",
+                    "createdAt",
+                    "updatedAt"
+                ]
+            },
+            "CountryWithCurrency": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Country"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "currency": {
+                                "$ref": "#/components/schemas/Currency",
+                                "nullable": true
+                            }
+                        }
+                    }
+                ]
+            },
+            "CountryWithCurrencyName": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Country"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "currencyName": {
+                                "type": "string",
+                                "description": "Name of the linked currency",
+                                "example": "US Dollar"
+                            }
+                        }
+                    }
+                ]
+            },
+            "CreateCurrencyRequest": {
+                "type": "object",
+                "properties": {
+                    "isoCode": {
+                        "type": "string",
+                        "pattern": "^[A-Z]{3}$",
+                        "description": "3-letter ISO currency code",
+                        "example": "USD"
+                    },
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100,
+                        "description": "Currency name",
+                        "example": "US Dollar"
+                    },
+                    "symbol": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 10,
+                        "description": "Currency symbol",
+                        "example": "$"
+                    },
+                    "validFrom": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date from which this currency is valid"
+                    },
+                    "validTo": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date until which this currency is valid"
+                    }
+                },
+                "required": ["isoCode", "name"]
+            },
+            "UpdateCurrencyRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100,
+                        "description": "Currency name",
+                        "example": "US Dollar"
+                    },
+                    "validFrom": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date from which this currency is valid"
+                    }
+                }
+            },
+            "CreateCountryRequest": {
+                "type": "object",
+                "properties": {
+                    "isoCode": {
+                        "type": "string",
+                        "pattern": "^[A-Z]{2}$",
+                        "description": "2-letter ISO country code",
+                        "example": "US"
+                    },
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100,
+                        "description": "Country name",
+                        "example": "United States"
+                    },
+                    "currencyIsoCode": {
+                        "type": "string",
+                        "pattern": "^[A-Z]{3}$",
+                        "description": "ISO code of the currency used by this country",
+                        "example": "USD"
+                    },
+                    "validFrom": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date from which this country is valid"
+                    },
+                    "validTo": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date until which this country is valid"
+                    }
+                },
+                "required": ["isoCode", "name", "currencyIsoCode"]
+            },
+            "UpdateCountryRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100,
+                        "description": "Country name",
+                        "example": "United States"
+                    },
+                    "currencyIsoCode": {
+                        "type": "string",
+                        "pattern": "^[A-Z]{3}$",
+                        "description": "ISO code of the currency used by this country",
+                        "example": "USD"
+                    },
+                    "validFrom": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date from which this country is valid"
+                    }
+                }
+            },
+            "Notification": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Unique notification identifier",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": ["CREATE", "UPDATE", "ARCHIVE"],
+                        "description": "Type of notification",
+                        "example": "CREATE"
+                    },
+                    "entityType": {
+                        "type": "string",
+                        "enum": ["Country", "Currency"],
+                        "description": "Type of entity this notification relates to",
+                        "example": "Country"
+                    },
+                    "entityId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "UUID of the related entity",
+                        "example": "550e8400-e29b-41d4-a716-446655440001"
+                    },
+                    "entityIdentifier": {
+                        "type": "string",
+                        "description": "Identifier of the related entity (e.g., ISO code)",
+                        "example": "US"
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Human-readable notification message",
+                        "example": "New country \"US\" has been created"
+                    },
+                    "details": {
+                        "type": "object",
+                        "description": "Additional details about the notification",
+                        "example": {
+                            "countryName": "United States",
+                            "currencyIsoCode": "USD",
+                            "validFrom": "2024-01-01T00:00:00.000Z",
+                            "validTo": null,
+                            "action": "created",
+                            "timestamp": "2024-01-01T10:30:00.000Z"
+                        }
+                    },
+                    "isRead": {
+                        "type": "boolean",
+                        "description": "Whether the notification has been read",
+                        "example": false
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "When the notification was created"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "When the notification was last updated"
+                    }
+                },
+                "required": [
+                    "id",
+                    "type",
+                    "entityType",
+                    "entityId",
+                    "entityIdentifier",
+                    "message",
+                    "isRead",
+                    "createdAt",
+                    "updatedAt"
+                ]
+            },
+            "MarkAsReadRequest": {
+                "type": "object",
+                "properties": {
+                    "notificationIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "description": "Array of notification UUIDs to mark as read",
+                        "example": ["550e8400-e29b-41d4-a716-446655440000", "550e8400-e29b-41d4-a716-446655440001"]
+                    }
+                },
+                "required": ["notificationIds"]
+            },
+            "MarkAllAsReadRequest": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["CREATE", "UPDATE", "ARCHIVE"],
+                        "description": "Filter by notification type"
+                    },
+                    "entityType": {
+                        "type": "string",
+                        "enum": ["Country", "Currency"],
+                        "description": "Filter by entity type"
+                    }
+                }
+            },
+            "PageInfo": {
+                "type": "object",
+                "properties": {
+                    "pageIndex": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "Current page index (0-based)",
+                        "example": 0
+                    },
+                    "pageSize": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100,
+                        "description": "Number of items per page",
+                        "example": 50
+                    }
+                }
+            },
+            "NotificationPagination": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/PageInfo"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "totalCount": {
+                                "type": "integer",
+                                "description": "Total number of notifications",
+                                "example": 100
+                            },
+                            "totalPages": {
+                                "type": "integer",
+                                "description": "Total number of pages",
+                                "example": 2
+                            }
+                        }
+                    }
+                ]
+            },
+            "ErrorResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "error": {
+                        "type": "string",
+                        "description": "Error message",
+                        "example": "Currency with ISO code USD already exists"
+                    }
+                }
+            }
+        },
+        "responses": {
+            "BadRequest": {
+                "description": "Bad request - validation error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "InternalServerError": {
+                "description": "Internal server error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Currencies",
+            "description": "Operations for managing currencies"
+        },
+        {
+            "name": "Countries",
+            "description": "Operations for managing countries"
+        },
+        {
+            "name": "Notifications",
+            "description": "Operations for managing notifications and tracking data changes"
+        }
+    ]
+}

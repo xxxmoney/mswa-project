@@ -1,6 +1,7 @@
 const Country = require('../models/Country');
 const Currency = require('../models/Currency');
 const countryValidation = require('../validation/countryValidation');
+const NotificationService = require('../services/notificationService');
 const { v4: uuidv4 } = require('uuid');
 
 const countryController = {
@@ -9,9 +10,10 @@ const countryController = {
     try {
       const id = uuidv4();
       
-      const requestBody = { ...req.body, id };
-      
+      const requestBody = { ...req.body };
+
       const { error } = countryValidation.create.validate(requestBody);
+
       if (error) {
         return res.status(400).json({
           success: false,
@@ -31,7 +33,7 @@ const countryController = {
       }
 
       // Check if the linked currency exists and is active
-      const linkedCurrency = await Currency.getCurrent(id, currencyIsoCode);
+      const linkedCurrency = await Currency.getByIsoCode(currencyIsoCode);
       if (!linkedCurrency) {
         return res.status(404).json({
           success: false,
@@ -49,7 +51,20 @@ const countryController = {
         validTo: validTo ? new Date(validTo) : null
       };
 
-      const createdCountry = await Country.create(countryData);
+      const createdCountry = await Country.createCountry(countryData);
+
+      // Create notification for country creation
+      await NotificationService.createCreationNotification(
+        'Country',
+        createdCountry.id,
+        createdCountry.isoCode,
+        {
+          countryName: createdCountry.name,
+          currencyIsoCode: createdCountry.currencyIsoCode,
+          validFrom: createdCountry.validFrom,
+          validTo: createdCountry.validTo
+        }
+      );
 
       res.status(201).json({
         success: true,
@@ -58,6 +73,15 @@ const countryController = {
           currencyName: linkedCurrency.name
         }
       });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async getAll(req, res, next) {
+    try {
+      const countries = await Country.find({});
+      res.json({ success: true, data: countries });
     } catch (error) {
       next(error);
     }
@@ -84,19 +108,17 @@ const countryController = {
         });
       }
 
-      let currencyName = "N/A";
+      let currency = null;
+
       if (country.currencyIsoCode) {
-        const currency = await Currency.getCurrent(id, country.currencyIsoCode);
-        if (currency) {
-          currencyName = currency.name;
-        }
+        currency = await Currency.getByIsoCode(country.currencyIsoCode);
       }
 
       res.json({
         success: true,
         data: {
           ...country.toObject(),
-          currencyName
+          currency,
         }
       });
     } catch (error) {
@@ -120,7 +142,7 @@ const countryController = {
 
       // Check if currency exists if it's being updated
       if (updateData.currencyIsoCode) {
-        const linkedCurrency = await Currency.getCurrent(id, updateData.currencyIsoCode);
+        const linkedCurrency = await Currency.getByIsoCode(updateData.currencyIsoCode);
         if (!linkedCurrency) {
           return res.status(404).json({
             success: false,
@@ -137,7 +159,21 @@ const countryController = {
         });
       }
 
-      const currency = await Currency.getCurrent(id, updatedCountry.currencyIsoCode);
+      // Create notification for country update
+      await NotificationService.createUpdateNotification(
+        'Country',
+        updatedCountry.id,
+        updatedCountry.isoCode,
+        {
+          countryName: updatedCountry.name,
+          currencyIsoCode: updatedCountry.currencyIsoCode,
+          validFrom: updatedCountry.validFrom,
+          validTo: updatedCountry.validTo,
+          changes: updateData
+        }
+      );
+
+      const currency = await Currency.getByIsoCode(updatedCountry.currencyIsoCode);
       const currencyName = currency ? currency.name : "N/A";
 
       res.json({
@@ -173,9 +209,22 @@ const countryController = {
         });
       }
 
+      // Create notification for country archivation
+      await NotificationService.createArchiveNotification(
+        'Country',
+        archivedCountry.id,
+        archivedCountry.isoCode,
+        {
+          countryName: archivedCountry.name,
+          currencyIsoCode: archivedCountry.currencyIsoCode,
+          validFrom: archivedCountry.validFrom,
+          validTo: archivedCountry.validTo
+        }
+      );
+
       let currencyName = "N/A";
       if (archivedCountry.currencyIsoCode) {
-        const currency = await Currency.getCurrent(id, archivedCountry.currencyIsoCode);
+        const currency = await Currency.getByIsoCode(archivedCountry.currencyIsoCode);
         if (currency) {
           currencyName = currency.name;
         }
@@ -196,7 +245,7 @@ const countryController = {
   // List current countries
   async listCurrent(req, res, next) {
     try {
-      const { error } = countryValidation.list.validate({ ...req.params, ...req.query });
+      const { error } = countryValidation.list.validate({ ...req.query });
       if (error) {
         return res.status(400).json({
           success: false,
@@ -204,25 +253,19 @@ const countryController = {
         });
       }
 
-      const { id } = req.params;
       const pageInfo = {
         pageIndex: parseInt(req.query.pageIndex) || 0,
         pageSize: parseInt(req.query.pageSize) || 50
       };
 
-      const countryList = await Country.listCurrent(id, pageInfo);
+      const countryList = await Country.listCurrent(pageInfo);
 
       const enrichedList = await Promise.all(countryList.map(async (country) => {
-        let currencyName = "N/A";
-        if (country.currencyIsoCode) {
-          const currency = await Currency.getCurrent(id, country.currencyIsoCode);
-          if (currency) {
-            currencyName = currency.name;
-          }
-        }
+        const countryData = country.toObject();
+
         return {
-          ...country.toObject(),
-          currencyName
+          ...countryData,
+          currency: countryData.currencyIsoCode ? await Currency.getByIsoCode(countryData.currencyIsoCode) : undefined
         };
       }));
 
@@ -249,18 +292,18 @@ const countryController = {
         });
       }
 
-      const { id, isoCode } = req.params;
+      const { isoCode } = req.params;
       const pageInfo = {
         pageIndex: parseInt(req.query.pageIndex) || 0,
         pageSize: parseInt(req.query.pageSize) || 50
       };
 
-      const history = await Country.getHistory(id, isoCode, pageInfo);
+      const history = await Country.getHistory(isoCode, pageInfo);
 
       const enrichedHistory = await Promise.all(history.map(async (countryVersion) => {
         let currencyName = "N/A";
         if (countryVersion.currencyIsoCode) {
-          const currency = await Currency.getCurrent(id, countryVersion.currencyIsoCode);
+          const currency = await Currency.getByIsoCode(countryVersion.currencyIsoCode);
           if (currency) {
             currencyName = currency.name;
           }
@@ -300,7 +343,7 @@ const countryController = {
       };
 
       // Check if the currency exists and is active
-      const currency = await Currency.getCurrent(id, currencyIsoCode);
+      const currency = await Currency.getByIsoCode(currencyIsoCode);
       if (!currency) {
         return res.status(404).json({
           success: false,

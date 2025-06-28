@@ -5,6 +5,7 @@ A RESTful API for managing reference data (countries and currencies) with tempor
 ## Features
 
 - **Temporal Versioning**: All entities support versioning with validFrom/validTo dates
+- **UUID-based Workspace IDs**: Secure, unique identifiers for data isolation
 - **CRUD Operations**: Full Create, Read, Update, Delete support
 - **Pagination**: Built-in pagination for list operations
 - **Validation**: Comprehensive input validation using Joi
@@ -76,7 +77,7 @@ Login with email and password.
 ### Countries
 
 #### POST /api/countries
-Create a new country.
+Create a new country. The workspace UUID is automatically generated.
 
 **Request Body:**
 ```json
@@ -163,7 +164,7 @@ List countries by currency.
 ### Currencies
 
 #### POST /api/currencies
-Create a new currency.
+Create a new currency. The workspace UUID is automatically generated.
 
 **Request Body:**
 ```json
@@ -235,10 +236,12 @@ Get version history of a currency.
 
 ## Business Rules
 
-1. **Unique ISO Codes**:
+1. **Unique ISO Codes**: Each workspace can have only one active country/currency per ISO code
 2. **Currency Dependency**: Countries must reference existing active currencies
 3. **Temporal Integrity**: New versions must have validFrom dates after the previous version's validFrom
-4. **Soft Deletion**: Archiving sets validTo date instead of deleting records
+4. **UUID Workspace Isolation**: All data is isolated by workspace UUID
+5. **Soft Deletion**: Archiving sets validTo date instead of deleting records
+6. **Auto-Generated UUIDs**: Create operations automatically generate workspace UUIDs
 
 ## Error Handling
 
@@ -279,10 +282,12 @@ npm run lint
 
 ## Security Considerations
 
+- **UUID Workspace IDs**: Prevents enumeration attacks and provides data isolation
 - **Input Validation**: All inputs are validated using Joi schemas
 - **JWT Authentication**: Secure token-based authentication
 - **MongoDB Injection Protection**: Mongoose provides built-in protection
 - **Error Sanitization**: Error messages don't expose internal details
+- **Auto-Generated IDs**: Create operations generate UUIDs server-side for security
 
 ## Performance Optimizations
 
