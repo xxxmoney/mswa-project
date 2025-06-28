@@ -5,10 +5,10 @@
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
-    "dev": "nodemon src/app.js",
-    "test": "jest",
-    "lint": "eslint src/",
-    "lint:fix": "eslint src/ --fix"
+    "dev": "node_modules/.bin/nodemon src/app.js",
+    "test": "node_modules/.bin/jest",
+    "lint": "node_modules/.bin/eslint src/",
+    "lint:fix": "node_modules/.bin/eslint src/ --fix"
   },
   "keywords": [
     "express",
