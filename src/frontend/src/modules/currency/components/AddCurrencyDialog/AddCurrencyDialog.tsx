@@ -71,6 +71,17 @@ export const AddCurrencyDialog = () => {
 
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-4 py-4'>
                         <div className='space-y-2'>
+                            <Label htmlFor='currencyName' className='text-slate-200'>
+                                Currency Name
+                            </Label>
+                            <Input
+                                {...register('name')}
+                                placeholder='e.g., US Dollar'
+                                className='bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400'
+                            />
+                        </div>
+
+                        <div className='space-y-2'>
                             <Label htmlFor='isoCode' className='text-slate-200'>
                                 ISO Currency Code
                             </Label>
@@ -78,17 +89,6 @@ export const AddCurrencyDialog = () => {
                                 {...register('isoCode')}
                                 placeholder='e.g., USD'
                                 maxLength={3}
-                                className='bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400'
-                            />
-                        </div>
-
-                        <div className='space-y-2'>
-                            <Label htmlFor='currencyName' className='text-slate-200'>
-                                Currency Name
-                            </Label>
-                            <Input
-                                {...register('name')}
-                                placeholder='e.g., US Dollar'
                                 className='bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400'
                             />
                         </div>

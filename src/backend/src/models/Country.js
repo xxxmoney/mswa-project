@@ -158,7 +158,6 @@ countrySchema.statics.archiveCountry = async function(isoCode) {
     { new: true }
   );
 
-
   if (!updatedDocument) {
     // If no current version found, return the most recent archived version
     const findResult = await this.find(
@@ -173,7 +172,7 @@ countrySchema.statics.archiveCountry = async function(isoCode) {
 };
 
 countrySchema.statics.createCountry = async function(data) {
-  const activeCountry = await this.find({ isoCode: data.isoCode, validTo: null });
+  const activeCountry = await this.findOne({ isoCode: data.isoCode, validTo: null });
 
   if (activeCountry) {
     throw new Error(`Country with iso code ${data.isoCode} already exists and is active.`);

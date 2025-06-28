@@ -14,7 +14,13 @@ export const CountriesTable = () => {
     const query = useGetCountries();
 
     const router = useRouter();
-    const archiveCountry = useDeleteCountriesIsoCode();
+    const archiveCountry = useDeleteCountriesIsoCode({
+        mutation: {
+            onSuccess: () => {
+                query.refetch();
+            },
+        },
+    });
 
     return (
         // @ts-expect-error QueryLoader is not typed correctly
@@ -64,12 +70,14 @@ export const CountriesTable = () => {
                                         >
                                             <History className='w-4 h-4' />
                                         </Button>
-                                        <RemoveEntityButton
-                                            onSuccess={() => {
-                                                archiveCountry.mutate({ pathParams: { isoCode: country.isoCode } });
-                                            }}
-                                            isPending={archiveCountry.isPending}
-                                        />
+                                        {country.isCurrent && (
+                                            <RemoveEntityButton
+                                                onSuccess={() => {
+                                                    archiveCountry.mutate({ pathParams: { isoCode: country.isoCode } });
+                                                }}
+                                                isPending={archiveCountry.isPending}
+                                            />
+                                        )}
                                     </div>
                                 </TableCell>
                             </TableRow>

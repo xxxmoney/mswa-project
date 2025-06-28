@@ -67,11 +67,13 @@ currencySchema.statics.getActiveByIsoCode = async function(isoCode) {
 };
 
 // Static method to list current currencies
-currencySchema.statics.listCurrent = async function(pageInfo = {}) {
+currencySchema.statics.listCurrent = async function(pageInfo = {}, onlyActive) {
   const { pageIndex = 0, pageSize = 50 } = pageInfo;
   const skip = pageIndex * pageSize;
+
+
   
-  const currencies = await this.find()
+  const currencies = await this.find(onlyActive ? {validTo: null} : {})
     .sort({ validTo: -1 })
     .skip(skip)
     .limit(pageSize);
@@ -162,7 +164,7 @@ currencySchema.statics.archiveCurrency = async function(isoCode) {
 };
 
 currencySchema.statics.createCurrency = async function(data) {
-  const activeCurrency = await this.find({ isoCode: data.isoCode, validTo: null });
+  const activeCurrency = await this.findOne({ isoCode: data.isoCode, validTo: null });
 
   if (activeCurrency) {
     throw new Error(`Currency with iso code ${data.isoCode} already exists and is active.`);

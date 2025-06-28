@@ -18,4 +18,5 @@ export type GetCurrenciesParams = {
      * @maximum 100
      */
     pageSize?: number;
+    onlyActive?: boolean;
 };

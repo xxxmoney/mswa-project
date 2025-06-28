@@ -2,7 +2,6 @@ const Currency = require('../models/Currency');
 const Country = require('../models/Country');
 const currencyValidation = require('../validation/currencyValidation');
 const NotificationService = require('../services/notificationService');
-const { v4: uuidv4 } = require('uuid');
 
 const currencyController = {
   // Create a new currency
@@ -194,10 +193,10 @@ const currencyController = {
 
       const pageInfo = {
         pageIndex: parseInt(req.query.pageIndex) || 0,
-        pageSize: parseInt(req.query.pageSize) || 50
+        pageSize: parseInt(req.query.pageSize) || 50,
       };
 
-      const currencyList = await Currency.listCurrent(pageInfo);
+      const currencyList = await Currency.listCurrent(pageInfo, req.query.onlyActive);
 
       res.json({
         success: true,

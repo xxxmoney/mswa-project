@@ -15,7 +15,9 @@ export const CurrencySelect = () => {
         name: 'currencyIsoCode',
     });
 
-    const currenciesQuery = useGetCurrencies();
+    const currenciesQuery = useGetCurrencies({
+        onlyActive: true,
+    });
 
     return (
         <>
@@ -27,10 +29,10 @@ export const CurrencySelect = () => {
             <QueryLoader query={currenciesQuery}>
                 {({ data }) => (
                     <Select value={field.value} onValueChange={field.onChange}>
-                        <SelectTrigger className='w-full bg-slate-700/50 border-slate-600 text-white'>
+                        <SelectTrigger className='w-full bg-slate-700/50 border-slate-600 text-white cursor-pointer'>
                             <SelectValue placeholder='Select a currency' />
                         </SelectTrigger>
-                        <SelectContent className='bg-slate-800 border-slate-700'>
+                        <SelectContent className='bg-slate-800 border-slate-700 text-white'>
                             {data?.itemList?.map(currency => (
                                 <SelectItem key={currency.id} value={currency.isoCode}>
                                     {currency.name} ({currency.isoCode})

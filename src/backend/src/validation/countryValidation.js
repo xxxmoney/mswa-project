@@ -12,12 +12,12 @@ const countryValidation = {
 
   // Get country validation
   get: Joi.object({
-    isoCode: Joi.string().length(2).uppercase().required()
+    isoCode: Joi.string().min(2).max(10).uppercase().required()
   }),
 
   // Update country validation
   update: Joi.object({
-    isoCode: Joi.string().length(2).uppercase().required(),
+    isoCode: Joi.string().min(2).max(10).uppercase().required(),
     name: Joi.string().min(1).max(100).optional(),
     currencyIsoCode: Joi.string().length(3).uppercase().optional(),
     validFrom: Joi.date().optional()
@@ -25,7 +25,7 @@ const countryValidation = {
 
   // Archive country validation
   archive: Joi.object({
-    isoCode: Joi.string().length(2).uppercase().required()
+    isoCode: Joi.string().min(2).max(10).uppercase().required()
   }),
 
   // List countries validation
