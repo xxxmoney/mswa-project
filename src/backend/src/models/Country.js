@@ -71,7 +71,14 @@ countrySchema.statics.listCurrent = async function(pageInfo = {}) {
     .skip(skip)
     .limit(pageSize);
 
+    const activeCountries = await this.find({ validTo: null });
+
     const countriesByIsoCode = countries.reduce((acc, country) => {
+      if (activeCountries.some(activeCountry => activeCountry.isoCode === country.isoCode)) {
+        acc[country.isoCode] = country;
+        return acc;
+      }
+
       if (acc[country.isoCode]) {
         return acc;
       }
@@ -80,7 +87,9 @@ countrySchema.statics.listCurrent = async function(pageInfo = {}) {
       return acc;
     }, {});
   
-    return Object.values(countriesByIsoCode);
+    return Object.values(countriesByIsoCode).sort((a) => {
+      if (!a.validTo) return -1
+    });
 };
 
 // Static method to get history of a country
@@ -89,7 +98,7 @@ countrySchema.statics.getHistory = function(isoCode, pageInfo = {}) {
   const skip = pageIndex * pageSize;
   
   return this.find({ isoCode })
-    .sort({ validFrom: 1 })
+    .sort({ validTo: 1 })
     .skip(skip)
     .limit(pageSize);
 };
@@ -149,6 +158,7 @@ countrySchema.statics.archiveCountry = async function(isoCode) {
     { new: true }
   );
 
+
   if (!updatedDocument) {
     // If no current version found, return the most recent archived version
     const findResult = await this.find(
@@ -163,6 +173,12 @@ countrySchema.statics.archiveCountry = async function(isoCode) {
 };
 
 countrySchema.statics.createCountry = async function(data) {
+  const activeCountry = await this.find({ isoCode: data.isoCode, validTo: null });
+
+  if (activeCountry) {
+    throw new Error(`Country with iso code ${data.isoCode} already exists and is active.`);
+  }
+
   const existingCountry = await this.findOne({ isoCode: data.isoCode }, null, { sort: { validTo: -1 }, limit: 1 });
 
   if (existingCountry) {

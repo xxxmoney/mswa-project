@@ -199,9 +199,9 @@ const countryController = {
         });
       }
 
-      const { id, isoCode } = req.params;
+      const {  isoCode } = req.params;
 
-      const archivedCountry = await Country.archiveCountry(id, isoCode);
+      const archivedCountry = await Country.archiveCountry(isoCode);
       if (!archivedCountry) {
         return res.status(404).json({
           success: false,
@@ -364,6 +364,26 @@ const countryController = {
           itemList: enrichedList,
           pageInfo
         }
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  async removeCountry(req, res, next) {
+    try {
+      const { error } = countryValidation.get.validate(req.params);
+      if (error) {
+        return res.status(400).json({
+          success: false,
+          error: error.details[0].message
+        });
+      }
+
+      const deletedCountry = await Country.deleteMany({ isoCode: req.params.isoCode });
+
+      res.json({
+        success: true,
+        data: deletedCountry
       });
     } catch (error) {
       next(error);

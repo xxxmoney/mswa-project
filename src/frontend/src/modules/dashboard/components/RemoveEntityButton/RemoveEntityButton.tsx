@@ -12,6 +12,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { AdminComponent } from '@/modules/auth/components';
 
 export interface RemoveEntityButtonProps<T extends UseMutationResult<unknown, Error, unknown>> {
     isPending: boolean;
@@ -23,6 +24,7 @@ export const RemoveEntityButton = <T extends UseMutationResult<unknown, Error, u
     onSuccess,
 }: RemoveEntityButtonProps<T>) => {
     const [isModalOpened, setIsModalOpened] = useState(false);
+
     return (
         <Dialog
             open={isModalOpened}
@@ -33,9 +35,16 @@ export const RemoveEntityButton = <T extends UseMutationResult<unknown, Error, u
             }}
         >
             <DialogTrigger asChild>
-                <Button size='sm' variant='ghost' className='text-red-400 hover:bg-red-400'>
-                    <Archive className='w-4 h-4' />
-                </Button>
+                <AdminComponent>
+                    <Button
+                        size='sm'
+                        variant='ghost'
+                        className='text-red-400 hover:bg-red-400'
+                        onClick={() => setIsModalOpened(true)}
+                    >
+                        <Archive className='w-4 h-4' />
+                    </Button>
+                </AdminComponent>
             </DialogTrigger>
             <DialogContent className='bg-slate-800 border-slate-700 text-white max-w-2xl'>
                 <DialogHeader>

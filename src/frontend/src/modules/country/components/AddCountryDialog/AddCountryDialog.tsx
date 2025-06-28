@@ -44,7 +44,7 @@ export const AddCountryDialog = () => {
     const mutation = usePostCountries({
         mutation: {
             onSuccess: async () => {
-                await queryClient.invalidateQueries();
+                await queryClient.invalidateQueries({ queryKey: getGetCountriesQueryKey() });
                 setIsCreateModalOpen(false);
                 reset();
             },
@@ -114,7 +114,8 @@ export const AddCountryDialog = () => {
                                 <div className='col-span-2'>
                                     <div className='flex items-center justify-between'>
                                         <p className='text-red-500 text-sm'>
-                                            An error occurred while creating the country: {mutation.error.error}
+                                            {/* @ts-expect-error Invalid type */}
+                                            {mutation.error.data?.error || mutation.error.error}
                                         </p>
                                     </div>
                                 </div>

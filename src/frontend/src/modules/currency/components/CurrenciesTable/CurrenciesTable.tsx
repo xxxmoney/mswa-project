@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { formatDate } from 'date-fns';
 import { History } from 'lucide-react';
 import { useRouter } from 'next/router';
@@ -12,9 +13,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 
 export const CurrenciesTable = () => {
     const query = useGetCurrencies();
+    const queryClient = useQueryClient();
 
     const router = useRouter();
-    const archiveCurrency = useDeleteCurrenciesIsoCode();
+    const archiveCurrency = useDeleteCurrenciesIsoCode({
+        mutation: {
+            onSuccess: () => queryClient.invalidateQueries({ queryKey: query.queryKey }),
+        },
+    });
 
     return (
         // @ts-expect-error QueryLoader is not typed correctly

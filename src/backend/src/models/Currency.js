@@ -62,6 +62,10 @@ currencySchema.statics.getByIsoCode = async function(isoCode) {
   return this.findOne({ isoCode });
 };
 
+currencySchema.statics.getActiveByIsoCode = async function(isoCode) {
+  return this.findOne({ isoCode, validTo: null });
+};
+
 // Static method to list current currencies
 currencySchema.statics.listCurrent = async function(pageInfo = {}) {
   const { pageIndex = 0, pageSize = 50 } = pageInfo;
@@ -72,7 +76,15 @@ currencySchema.statics.listCurrent = async function(pageInfo = {}) {
     .skip(skip)
     .limit(pageSize);
 
+  const activeCurrencies = await this.find({ validTo: null });
+
   const currenciesByIsoCode = currencies.reduce((acc, currency) => {
+    if (activeCurrencies.some(activeCurrency => activeCurrency.isoCode === currency.isoCode)) {
+      acc[currency.isoCode] = currency;
+
+      return acc;
+    }
+
     if (acc[currency.isoCode]) {
       return acc;
     }
@@ -81,7 +93,9 @@ currencySchema.statics.listCurrent = async function(pageInfo = {}) {
     return acc;
   }, {});
 
-  return Object.values(currenciesByIsoCode);
+  return Object.values(currenciesByIsoCode).sort((a, b) => {
+    if (!a.validTo) return -1
+  });
 };
 
 // Static method to get history of a currency
@@ -148,6 +162,12 @@ currencySchema.statics.archiveCurrency = async function(isoCode) {
 };
 
 currencySchema.statics.createCurrency = async function(data) {
+  const activeCurrency = await this.find({ isoCode: data.isoCode, validTo: null });
+
+  if (activeCurrency) {
+    throw new Error(`Currency with iso code ${data.isoCode} already exists and is active.`);
+  }
+
   const existingCurrency = await this.findOne({ isoCode: data.isoCode }, null, { sort: { validTo: -1 }, limit: 1 });
 
   if (existingCurrency) {

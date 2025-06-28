@@ -36,7 +36,7 @@ const countryValidation = {
 
   // Get history validation
   getHistory: Joi.object({
-    isoCode: Joi.string().length(2).uppercase().required(),
+    isoCode: Joi.string().min(2).max(10).uppercase().required(),
     pageIndex: Joi.number().integer().min(0).default(0),
     pageSize: Joi.number().integer().min(1).max(100).default(50)
   }),
